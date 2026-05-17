@@ -21,8 +21,12 @@ export const draculaTheme = createTheme({
       default: draculaColors.background,
       paper: draculaColors.currentLine,
     },
-    primary: { main: draculaColors.purple },
-    secondary: { main: draculaColors.pink },
+    primary: {
+      main: draculaColors.purple,
+    },
+    secondary: {
+      main: draculaColors.pink,
+    },
     text: {
       primary: draculaColors.foreground,
       secondary: draculaColors.comment,
@@ -30,5 +34,46 @@ export const draculaTheme = createTheme({
   },
   typography: {
     fontFamily: "'JetBrains Mono', monospace",
+    h1: {
+      fontFamily: "'JetBrains Mono', monospace",
+      fontWeight: 700,
+    },
+    h2: {
+      fontFamily: "'JetBrains Mono', monospace",
+      fontWeight: 700,
+    },
+    h3: {
+      fontFamily: "'JetBrains Mono', monospace",
+      fontWeight: 700,
+    },
+    body1: {
+      fontFamily: "'JetBrains Mono', monospace",
+    },
+    body2: {
+      fontFamily: "'JetBrains Mono', monospace",
+    },
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: draculaColors.background,
+          color: draculaColors.foreground,
+        },
+        '::-webkit-scrollbar': {
+          width: '8px',
+        },
+        '::-webkit-scrollbar-track': {
+          background: draculaColors.background,
+        },
+        '::-webkit-scrollbar-thumb': {
+          background: draculaColors.currentLine,
+          borderRadius: '4px',
+        },
+        '::-webkit-scrollbar-thumb:hover': {
+          background: draculaColors.comment,
+        },
+      },
+    },
   },
 });
