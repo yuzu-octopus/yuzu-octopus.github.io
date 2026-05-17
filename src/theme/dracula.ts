@@ -33,24 +33,24 @@ export const draculaTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: "'JetBrains Mono', monospace",
+    fontFamily: "'JetBrainsMono Nerd Font', monospace",
     h1: {
-      fontFamily: "'JetBrains Mono', monospace",
+      fontFamily: "'JetBrainsMono Nerd Font', monospace",
       fontWeight: 700,
     },
     h2: {
-      fontFamily: "'JetBrains Mono', monospace",
+      fontFamily: "'JetBrainsMono Nerd Font', monospace",
       fontWeight: 700,
     },
     h3: {
-      fontFamily: "'JetBrains Mono', monospace",
+      fontFamily: "'JetBrainsMono Nerd Font', monospace",
       fontWeight: 700,
     },
     body1: {
-      fontFamily: "'JetBrains Mono', monospace",
+      fontFamily: "'JetBrainsMono Nerd Font', monospace",
     },
     body2: {
-      fontFamily: "'JetBrains Mono', monospace",
+      fontFamily: "'JetBrainsMono Nerd Font', monospace",
     },
   },
   components: {
