@@ -32,6 +32,10 @@ Thumbs.db
 .superpowers/
 .opencode/
 
+# Playwright MCP test artifacts
+.playwright-mcp/
+page-verify.md
+
 # Bun
 bun.lockb
 
