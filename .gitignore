@@ -31,7 +31,6 @@ Thumbs.db
 # Internal / dev files
 .superpowers/
 .opencode/
-docs/
 
 # Bun
 bun.lockb
