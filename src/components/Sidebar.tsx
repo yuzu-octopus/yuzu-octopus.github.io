@@ -9,6 +9,7 @@ import {
   Box,
   Avatar,
   Typography,
+  Link,
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
@@ -38,6 +39,8 @@ export function Sidebar() {
           boxSizing: 'border-box',
           backgroundColor: draculaColors.currentLine,
           borderRight: `1px solid ${draculaColors.comment}`,
+          display: 'flex',
+          flexDirection: 'column',
         },
       }}
     >
@@ -54,7 +57,7 @@ export function Sidebar() {
         </Typography>
       </Box>
       <Divider sx={{ borderColor: draculaColors.comment }} />
-      <List>
+      <List sx={{ flex: 1 }}>
         {navItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton component="a" href={item.href}>
@@ -82,6 +85,53 @@ export function Sidebar() {
           </ListItemButton>
         </ListItem>
       </List>
+      <Box
+        sx={{
+          p: 1.5,
+          textAlign: 'center',
+          borderTop: `1px solid ${draculaColors.comment}`,
+        }}
+      >
+        <Typography
+          variant="caption"
+          sx={{
+            color: draculaColors.comment,
+            fontSize: '0.65rem',
+            display: 'block',
+            mb: 0.5,
+          }}
+        >
+          © 2026 yuzu-octopus
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+          <Link
+            href="https://pages.github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              color: draculaColors.comment,
+              fontSize: '0.6rem',
+              textDecoration: 'none',
+              '&:hover': { color: draculaColors.purple },
+            }}
+          >
+            Powered by GitHub Pages
+          </Link>
+          <Link
+            href="https://vitejs.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              color: draculaColors.comment,
+              fontSize: '0.6rem',
+              textDecoration: 'none',
+              '&:hover': { color: draculaColors.purple },
+            }}
+          >
+            Made with Vite
+          </Link>
+        </Box>
+      </Box>
     </Drawer>
   );
 }
