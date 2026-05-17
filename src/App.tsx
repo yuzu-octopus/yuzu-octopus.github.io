@@ -1,6 +1,6 @@
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { draculaTheme } from './theme/dracula';
-import { Sidebar } from './components/Sidebar';
+import { Sidebar, drawerWidth } from './components/Sidebar';
 import { Hero } from './components/Hero';
 import { About } from './components/About';
 import { ConfigsGallery } from './components/ConfigsGallery';
@@ -12,7 +12,7 @@ function App() {
     <ThemeProvider theme={draculaTheme}>
       <CssBaseline />
       <Sidebar />
-      <main style={{ marginLeft: '240px' }}>
+      <main style={{ marginLeft: drawerWidth }}>
         <Hero />
         <About />
         <ConfigsGallery />

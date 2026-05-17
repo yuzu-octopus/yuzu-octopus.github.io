@@ -24,7 +24,7 @@ const navItems = [
   { text: 'Workspace', icon: <DesktopMacIcon />, href: '#workspace' },
 ];
 
-const drawerWidth = 240;
+export const drawerWidth = 240;
 
 export function Sidebar() {
   return (
