@@ -10,6 +10,8 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { draculaColors } from '../theme/dracula';
 import type { Config } from '../data/configs';
 
@@ -17,8 +19,18 @@ interface ConfigCardProps {
   config: Config;
 }
 
+const languageMap: Record<string, string> = {
+  json: 'json',
+  jsonc: 'json',
+  toml: 'toml',
+  ini: 'ini',
+  yaml: 'yaml',
+  sh: 'bash',
+};
+
 export function ConfigCard({ config }: ConfigCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const lang = languageMap[config.language] || 'plaintext';
 
   return (
     <Card
@@ -55,27 +67,34 @@ export function ConfigCard({ config }: ConfigCardProps) {
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Box
             sx={{
-              backgroundColor: '#1e1f29',
               borderRadius: 1,
-              p: 2,
               overflow: 'auto',
               maxHeight: 400,
               border: `1px solid ${draculaColors.comment}`,
+              '& pre': {
+                margin: 0,
+                padding: '1rem !important',
+                background: `${draculaColors.background} !important`,
+              },
+              '& code': {
+                fontFamily: "'JetBrains Mono', monospace !important",
+                fontSize: '0.8rem !important',
+                lineHeight: '1.5 !important',
+              },
             }}
           >
-            <pre
-              style={{
+            <SyntaxHighlighter
+              language={lang}
+              style={dracula}
+              customStyle={{
                 margin: 0,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '0.8rem',
-                lineHeight: 1.5,
-                color: draculaColors.foreground,
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
+                borderRadius: 0,
               }}
+              wrapLines
+              wrapLongLines
             >
               {config.code}
-            </pre>
+            </SyntaxHighlighter>
           </Box>
         </Collapse>
       </CardContent>
