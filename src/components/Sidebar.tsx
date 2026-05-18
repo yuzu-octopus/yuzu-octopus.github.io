@@ -85,52 +85,22 @@ export function Sidebar() {
           </ListItemButton>
         </ListItem>
       </List>
-      <Box
-        sx={{
-          p: 1.5,
-          textAlign: 'center',
-          borderTop: `1px solid ${draculaColors.comment}`,
-        }}
-      >
-        <Typography
-          variant="caption"
-          sx={{
-            color: draculaColors.comment,
-            fontSize: '0.65rem',
-            display: 'block',
-            mb: 0.5,
-          }}
-        >
+      <Box sx={{ p: 2 }}>
+        <Typography variant="caption" sx={{ color: draculaColors.comment, display: 'block' }}>
           © 2026 yuzu-octopus
         </Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, flexWrap: 'wrap' }}>
-          <Link
-            href="https://pages.github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{
-              color: draculaColors.comment,
-              fontSize: '0.6rem',
-              textDecoration: 'none',
-              '&:hover': { color: draculaColors.purple },
-            }}
-          >
-            Powered by GitHub Pages
+        <Typography variant="caption" sx={{ color: draculaColors.comment, display: 'block' }}>
+          Powered by{' '}
+          <Link href="https://pages.github.com" target="_blank" rel="noopener" sx={{ color: draculaColors.purple }}>
+            GitHub Pages
           </Link>
-          <Link
-            href="https://vitejs.dev"
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{
-              color: draculaColors.comment,
-              fontSize: '0.6rem',
-              textDecoration: 'none',
-              '&:hover': { color: draculaColors.purple },
-            }}
-          >
-            Made with Vite
+        </Typography>
+        <Typography variant="caption" sx={{ color: draculaColors.comment, display: 'block' }}>
+          Made with{' '}
+          <Link href="https://vite.dev" target="_blank" rel="noopener" sx={{ color: draculaColors.purple }}>
+            Vite
           </Link>
-        </Box>
+        </Typography>
       </Box>
     </Drawer>
   );
