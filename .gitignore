@@ -43,3 +43,8 @@ bun.lockb
 .env
 .env.local
 .env.*.local
+
+# Screenshot capture temp files
+frames/
+.vhs-test-exec/
+vhs-out-test/
