@@ -26,6 +26,7 @@ const languageMap: Record<string, string> = {
   ini: 'ini',
   yaml: 'yaml',
   sh: 'bash',
+  nu: 'bash',
 };
 
 export function ConfigCard({ config }: ConfigCardProps) {

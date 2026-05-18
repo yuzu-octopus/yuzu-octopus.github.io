@@ -642,4 +642,69 @@ macos-option-as-alt = true`,
   }
 }`,
   },
+  {
+    id: 'nushell-env',
+    name: 'Nushell Environment',
+    description: `Nushell's environment configuration: editor, PATH, color settings, and LS_COLORS via vivid Dracula`,
+    screenshot: '/screenshots/nushell-env.png',
+    sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/nushell/env.nu',
+    language: 'nu',
+    code: `$env.EDITOR = "micro"
+$env.MICRO_TRUECOLOR = "1"
+$env.CLICOLOR = "1"
+$env.COLORTERM = "truecolor"
+$env.BUN_INSTALL = ($env.HOME | path join ".bun")
+$env.OPENCODE_ENABLE_EXA = "1"
+
+$env.PATH = ($env.PATH | split row (char esep) | prepend [
+    "/opt/homebrew/bin"
+    "/opt/homebrew/sbin"
+    ($env.HOME | path join ".bun" "bin")
+    ($env.HOME | path join ".lmstudio" "bin")
+    ($env.HOME | path join ".spicetify")
+    ($env.HOME | path join ".orbstack" "bin")
+    ($env.HOME | path join ".local" "bin")
+] | uniq | path expand)
+
+$env.LS_COLORS = (vivid generate dracula)`,
+  },
+  {
+    id: 'nushell-config',
+    name: 'Nushell Config',
+    description: 'Shell aliases, configuration flags, history settings, fuzzy completions, and starship prompt integration',
+    screenshot: '/screenshots/nushell-config.png',
+    sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/nushell/config.nu',
+    language: 'nu',
+    code: `alias cls = clear
+alias edit = micro
+alias nano = micro
+alias py = python3
+alias quit = exit
+alias run = code_runner
+
+$env.config = ($env.config
+| upsert show_banner false
+| upsert edit_mode emacs
+| upsert buffer_editor "micro"
+| upsert rm { always_trash: true }
+| upsert history {
+    file_format: sqlite
+    max_size: 5_000_000
+    sync_on_enter: true
+    isolation: true
+}
+| upsert completions {
+    case_sensitive: false
+    algorithm: "fuzzy"
+    partial: true
+    quick: true
+})
+
+if ($env.TERM_PROGRAM != "zed") {
+    clear
+    ^fastfetch
+}
+
+starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")`,
+  },
 ];
