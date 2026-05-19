@@ -339,8 +339,8 @@ if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 25px (cat command line fully removed)
-    img = img.crop((0, 25, w, h))
+    # Skip top 35px (cat command line fully removed)
+    img = img.crop((0, 35, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
@@ -385,7 +385,7 @@ Enter
 Sleep 0.5s
 Type "cat {sf}"
 Enter
-Sleep 3s""", w=3840, h=2160, fs=100, shell="nu")
+Sleep 3s""", w=3840, h=2160, fs=75, shell="nu")
 # Crop starship: remove command input, tight crop to prompt block, add padding
 src = OUT / "starship.png"
 if src.exists():
