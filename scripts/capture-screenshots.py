@@ -339,8 +339,8 @@ if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 45px (command input line fully)
-    img = img.crop((0, 45, w, h))
+    # Skip top 75px (command input line fully)
+    img = img.crop((0, 75, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
@@ -442,24 +442,18 @@ if src.exists():
     else:
         cropped = img
     cw, ch = cropped.size
-    # Add padding to maintain aspect ratio and center the prompt
-    # Target ratio for 3683x2016 is ~1.827
-    target_ratio = 3683 / 2016
-    current_ratio = cw / ch
-    if current_ratio > target_ratio:
-        # Too wide, add vertical padding
-        new_h = round(cw / target_ratio)
-        v_pad = new_h - ch
-        top_pad = v_pad // 2
-        new_img = Image.new("RGB", (cw, new_h), bg)
-        new_img.paste(cropped, (0, top_pad))
-    else:
-        # Too tall, add horizontal padding
-        new_w = round(ch * target_ratio)
-        h_pad = new_w - cw
-        left_pad = h_pad // 2
-        new_img = Image.new("RGB", (new_w, ch), bg)
-        new_img.paste(cropped, (left_pad, 0))
+    # Scale content to fill ~45% of frame height after resize
+    # Target: content_height / 2016 = 0.45, so content_height = 907
+    # Current content height after resize: ch * (2016 / new_h)
+    # We want: ch * (2016 / new_h) = 907, so new_h = ch * 2016 / 907
+    target_content_height = 907
+    new_h = round(ch * 2016 / target_content_height)
+    new_w = round(new_h * 3683 / 2016)  # Maintain target aspect ratio
+    new_img = Image.new("RGB", (new_w, new_h), bg)
+    # Center the content
+    left_pad = (new_w - cw) // 2
+    top_pad = (new_h - ch) // 2
+    new_img.paste(cropped, (left_pad, top_pad))
     resized = new_img.resize((3683, 2016), Image.LANCZOS)
     resized.save(src)
     print(f"  starship: content {cw}x{ch} → 3683x2016 (with padding)")
