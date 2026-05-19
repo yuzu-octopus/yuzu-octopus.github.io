@@ -117,13 +117,22 @@ def capture_fastfetch_side_by_side():
     logo_text = re.sub(r'\x1b\[\d+A', '', logo_text)
     logo_text = re.sub(r'\x1b\[\?[0-9]+[a-z]', '', logo_text)
     logo_text = re.sub(r'\x1b\[m', '', logo_text)
-    # Extract non-empty logo lines with their ANSI colors
+
+    # Extract logo lines, preserving ANSI color state across lines
+    # Track the active color and inject it at the start of each line
     logo_lines = []
+    active_color = ""
     for line in logo_text.split("\n"):
         stripped = line.rstrip()
-        # Skip lines that are only ANSI codes or empty
         display = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', stripped)
         if display.strip():
+            # If this line has no color code, prepend the active color
+            if not re.search(r'\x1b\[38;2;', stripped) and active_color:
+                stripped = active_color + stripped
+            # Update active color if this line sets one
+            color_match = re.search(r'(\x1b\[38;2;\d+;\d+;\d+m)', stripped)
+            if color_match:
+                active_color = color_match.group(1)
             logo_lines.append(stripped)
 
     # Capture just the info (no logo)
@@ -305,7 +314,7 @@ Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
 src = OUT / "starship.png"
 if src.exists():
     cropped = TMP / "starship-cropped.png"
-    crop_png(src, cropped, 70, 80, 3690)
+    crop_png(src, cropped, 15, 60, 3690)
     subprocess.run(["mv", str(cropped), str(src)])
 
 # ============================================================
