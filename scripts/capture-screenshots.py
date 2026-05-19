@@ -21,11 +21,79 @@ def _ip_replacer(m):
     return "192.168.0.0" if ip.is_private else "1.2.3.4"
 
 def sanitize(text):
-    text = re.sub(r'Yuzus-MacBook-Air', 'Macbook-Air', text)
-    text = re.sub(r"yuzu'?s? MacBook Air", "Wifi", text)
-    text = IP_RE.sub(_ip_replacer, text)
-    text = re.sub(r'\w[\w\'\-]+\s*[-–]\s*802\.11\w*', r'Wifi - 802.11', text)
-    return text.strip()
+    """Apply text replacements on raw content, preserving ANSI color codes."""
+    # Strip cursor movement codes that cause rendering issues
+    text = re.sub(r'\x1b\[\d+[ACG]', '', text)       # cursor up/right/column
+    text = re.sub(r'\x1b\[\?[0-9]+[a-z]', '', text)  # private modes (?25l, ?7h)
+    text = re.sub(r'\x1b\[1G', '', text)              # cursor to column 1
+    # Remove carriage returns and control chars
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
+    text = re.sub(r'\x08', '', text)                  # backspace
+    text = re.sub(r'\x04', '', text)                  # EOF (Ctrl-D)
+    text = text.replace('^D', '')                     # literal ^D from script
+    text = text.replace('\x1b[1m', '')                # bold on at start
+    # Remove leading blank lines
+    text = text.lstrip('\n')
+
+    # Build position map: clean_char_idx -> original_char_idx
+    clean_chars = []
+    orig_chars = []
+    i = 0
+    while i < len(text):
+        if text[i] == '\x1b':
+            j = i + 1
+            if j < len(text) and text[j] == '[':
+                j += 1
+                while j < len(text) and not text[j].isalpha():
+                    j += 1
+                j += 1
+            elif j < len(text) and text[j] == ']':
+                j += 1
+                while j < len(text) and text[j] != '\x07':
+                    j += 1
+                j += 1
+            elif j < len(text):
+                j += 2
+            i = j
+        else:
+            clean_chars.append(text[i])
+            orig_chars.append(i)
+            i += 1
+
+    clean = ''.join(clean_chars)
+
+    # Find all replacements needed in clean text
+    replacements = []
+    for pattern, repl in [
+        (r'Yuzus-MacBook-Air', 'Macbook-Air'),
+        (r"yuzu'?s? MacBook Air", "Wifi"),
+        (r'\byuzu\b', 'user'),
+        (r"[\w'\-]+\s*JBL\s+Tune\s+\d+BT", "Bluetooth Headphones"),
+        (IP_RE.pattern, None),
+        (r'[\w\'\-]+\s*[-–]\s*802\.11\w*', 'Wifi - 802.11'),
+        (r'capture-screenshots\.py', 'nu'),
+        (r'\.opencode', 'Ghostty'),
+    ]:
+        regex = re.compile(pattern)
+        for m in regex.finditer(clean):
+            if repl is None:
+                repl_text = _ip_replacer(m)
+            else:
+                repl_text = repl
+            replacements.append((m.start(), m.end(), repl_text))
+
+    if not replacements:
+        return text.strip()
+
+    # Apply replacements in reverse order to preserve positions
+    replacements.sort(key=lambda r: r[0], reverse=True)
+    result = text
+    for clean_start, clean_end, repl_text in replacements:
+        orig_start = orig_chars[clean_start]
+        orig_end = orig_chars[clean_end - 1] + 1
+        result = result[:orig_start] + repl_text + result[orig_end:]
+
+    return result.strip()
 
 def capture(label, cmd_args):
     """Capture command output via script(1), sanitize, return path."""
@@ -37,11 +105,16 @@ def capture(label, cmd_args):
     )
     content = open(raw, errors="replace").read()
     content = content.replace("\r\n", "\n").replace("\r", "\n")
-    idx = content.find("\x1b[")
-    if idx > 0:
-        content = content[idx:]
+    # Keep ANSI codes, apply sanitization
     open(san, "w").write(sanitize(content))
     return san
+
+def crop_png(src, dst, crop_h, w):
+    """Crop TOP portion of a PNG using PIL."""
+    from PIL import Image
+    img = Image.open(src)
+    cropped = img.crop((0, 0, min(w, img.width), crop_h))
+    cropped.save(dst)
 
 def optimize_gif(path):
     """Optimize GIF with gifsicle to reduce file size."""
@@ -117,22 +190,31 @@ Set Shell "{shell}"
 # ============================================================
 print("1/4  fastfetch")
 sf = capture("fastfetch", ["fastfetch"])
-vhs("fastfetch", f"""Type "cat {sf}"
+vhs("fastfetch", f"""Type "cls"
+Enter
+Sleep 0.5s
+Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
 
 # ============================================================
-# 2. starship — load prompt, cls, capture (4K)
+# 2. starship — capture prompt output (4K)
 # ============================================================
 print("2/4  starship")
-# Generate starship init file for nushell
-subprocess.run(["starship", "init", "nu"], stdout=open(TMP / "starship.nu", "w"))
-vhs("starship", f"""Type "source {TMP / 'starship.nu'}"
+# Capture starship prompt directly
+sf = capture("starship", ["starship", "prompt"])
+vhs("starship", f"""Type "cls"
 Enter
-Sleep 1s
-Type "cls"
+Sleep 0.5s
+Type "cat {sf}"
 Enter
-Sleep 2s""", w=3840, h=2160, fs=24, shell="nu")
+Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
+# Crop starship to just the prompt line (top portion after cat)
+src = OUT / "starship.png"
+if src.exists():
+    cropped = TMP / "starship-cropped.png"
+    crop_png(src, cropped, 120, 3690)
+    subprocess.run(["mv", str(cropped), str(src)])
 
 # ============================================================
 # 3. ghostty — boo animation, trimmed with gifsicle (4K)
