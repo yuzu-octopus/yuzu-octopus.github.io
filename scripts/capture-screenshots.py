@@ -339,8 +339,8 @@ if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 100px (command input line and prompt)
-    img = img.crop((0, 100, w, h))
+    # Skip top 30px (command input line only)
+    img = img.crop((0, 30, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
@@ -392,24 +392,55 @@ if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 80px (command input line)
-    img = img.crop((0, 80, w, h))
+    # Skip top 150px (cat command output)
+    img = img.crop((0, 150, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
-    # Find content bounds
-    top, bottom, left, right = h, 0, w, 0
+    # Find content rows and identify main block (widest)
+    content_rows = []
     for y in range(h):
+        non_bg = 0
         for x in range(0, w, 2):
             idx = y * w + x
             r, g, b = arr[idx][:3]
             if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
-                if y < top: top = y
-                if y > bottom: bottom = y
-                if x < left: left = x
-                if x > right: right = x
-    # Tight crop to content
-    cropped = img.crop((left, top, right + 1, bottom + 1))
+                non_bg += 1
+        if non_bg > 10:
+            content_rows.append((y, non_bg))
+    # Find the main block (rows with high content width)
+    blocks = []
+    if content_rows:
+        start = content_rows[0][0]
+        prev = content_rows[0][0]
+        max_w = content_rows[0][1]
+        for i in range(1, len(content_rows)):
+            y, non_bg = content_rows[i]
+            # Split if content width drops significantly (e.g., from 1000+ to < 200)
+            if non_bg < 200 and max_w > 500:
+                blocks.append((start, prev, max_w))
+                start = y
+                max_w = non_bg
+            else:
+                max_w = max(max_w, non_bg)
+            prev = y
+        blocks.append((start, prev, max_w))
+    # Use the widest block (main prompt line)
+    if blocks:
+        main_block = max(blocks, key=lambda b: b[2])
+        top, bottom, _ = main_block
+        # Find left/right bounds for this block
+        left, right = w, 0
+        for y in range(top, bottom + 1):
+            for x in range(0, w, 2):
+                idx = y * w + x
+                r, g, b = arr[idx][:3]
+                if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
+                    if x < left: left = x
+                    if x > right: right = x
+        cropped = img.crop((left, top, right + 1, bottom + 1))
+    else:
+        cropped = img
     cw, ch = cropped.size
     # Add generous padding around prompt (center it)
     pad_x = cw // 2
