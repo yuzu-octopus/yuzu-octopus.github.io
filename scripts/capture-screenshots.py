@@ -339,8 +339,8 @@ if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 75px (command input line fully)
-    img = img.crop((0, 75, w, h))
+    # Skip top 8px (just the prompt line)
+    img = img.crop((0, 8, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
@@ -386,18 +386,18 @@ Sleep 0.5s
 Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=100, shell="nu")
-# Crop starship: remove command input, tight crop to single-line prompt, add padding
+# Crop starship: remove command input, tight crop to prompt block, add padding
 src = OUT / "starship.png"
 if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 150px (cat command output)
-    img = img.crop((0, 150, w, h))
+    # Skip top 100px (cat command output)
+    img = img.crop((0, 100, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
-    # Find content rows and identify main block (widest)
+    # Find content rows and identify blocks
     content_rows = []
     for y in range(h):
         non_bg = 0
@@ -408,7 +408,7 @@ if src.exists():
                 non_bg += 1
         if non_bg > 10:
             content_rows.append((y, non_bg))
-    # Find the main block (rows with high content width)
+    # Find blocks by width drops
     blocks = []
     if content_rows:
         start = content_rows[0][0]
@@ -416,7 +416,6 @@ if src.exists():
         max_w = content_rows[0][1]
         for i in range(1, len(content_rows)):
             y, non_bg = content_rows[i]
-            # Split if content width drops significantly (e.g., from 1000+ to < 200)
             if non_bg < 200 and max_w > 500:
                 blocks.append((start, prev, max_w))
                 start = y
@@ -425,11 +424,11 @@ if src.exists():
                 max_w = max(max_w, non_bg)
             prev = y
         blocks.append((start, prev, max_w))
-    # Use the widest block (main prompt line)
+    # Use the widest block (main prompt)
     if blocks:
         main_block = max(blocks, key=lambda b: b[2])
         top, bottom, _ = main_block
-        # Find left/right bounds for this block
+        # Find left/right bounds
         left, right = w, 0
         for y in range(top, bottom + 1):
             for x in range(0, w, 2):
@@ -443,14 +442,10 @@ if src.exists():
         cropped = img
     cw, ch = cropped.size
     # Scale content to fill ~45% of frame height after resize
-    # Target: content_height / 2016 = 0.45, so content_height = 907
-    # Current content height after resize: ch * (2016 / new_h)
-    # We want: ch * (2016 / new_h) = 907, so new_h = ch * 2016 / 907
     target_content_height = 907
     new_h = round(ch * 2016 / target_content_height)
-    new_w = round(new_h * 3683 / 2016)  # Maintain target aspect ratio
+    new_w = round(new_h * 3683 / 2016)
     new_img = Image.new("RGB", (new_w, new_h), bg)
-    # Center the content
     left_pad = (new_w - cw) // 2
     top_pad = (new_h - ch) // 2
     new_img.paste(cropped, (left_pad, top_pad))
