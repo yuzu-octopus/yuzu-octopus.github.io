@@ -218,6 +218,57 @@ def crop_png(src, dst, crop_y, crop_h, w):
     cropped = img.crop((0, crop_y, min(w, img.width), crop_y + crop_h))
     cropped.save(dst)
 
+def auto_crop_and_resize(src, dst, target_ratio=None):
+    """Auto-detect content bounds, crop blank borders, resize to target aspect ratio."""
+    from PIL import Image
+    img = Image.open(src)
+    arr = list(img.getdata())
+    w, h = img.size
+    bg = (30, 31, 41)  # Dracula background
+
+    # Find content bounds
+    top, bottom, left, right = h, 0, w, 0
+    for y in range(h):
+        for x in range(0, w, 4):
+            idx = y * w + x
+            r, g, b = arr[idx][:3]
+            if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
+                if y < top: top = y
+                if y > bottom: bottom = y
+                if x < left: left = x
+                if x > right: right = x
+
+    if bottom <= top or right <= left:
+        # No content found, save as-is
+        img.save(dst)
+        return
+
+    # Add small padding around content
+    pad = 4
+    top = max(0, top - pad)
+    bottom = min(h, bottom + pad)
+    left = max(0, left - pad)
+    right = min(w, right + pad)
+
+    cropped = img.crop((left, top, right, bottom))
+    cw, ch = cropped.size
+
+    # Resize to target aspect ratio if specified
+    if target_ratio:
+        current_ratio = cw / ch
+        if current_ratio > target_ratio:
+            # Too wide: resize based on width
+            new_h = round(cw / target_ratio)
+            new_w = cw
+        else:
+            # Too tall: resize based on height
+            new_w = round(ch * target_ratio)
+            new_h = ch
+        resized = cropped.resize((new_w, new_h), Image.LANCZOS)
+        resized.save(dst)
+    else:
+        cropped.save(dst)
+
 def optimize_gif(path):
     """Optimize GIF with gifsicle to reduce file size."""
     tmp = path.with_suffix(".tmp.gif")
@@ -298,12 +349,13 @@ Sleep 0.5s
 Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
-# Crop fastfetch to remove command input line at top
+# Crop fastfetch to remove command input line, then auto-crop and resize
 src = OUT / "fastfetch.png"
 if src.exists():
     cropped = TMP / "fastfetch-cropped.png"
-    crop_png(src, cropped, 30, 2000, 3690)
-    subprocess.run(["mv", str(cropped), str(src)])
+    crop_png(src, cropped, 30, 2100, 3690)
+    # Auto-crop blank borders and resize to match opencode ratio
+    auto_crop_and_resize(cropped, src, target_ratio=1.827)
 
 # ============================================================
 # 2. starship — capture prompt, strip first/last lines (4K)
@@ -316,12 +368,13 @@ Sleep 0.5s
 Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
-# Crop starship to just the prompt line (skip command input above)
+# Crop starship to just the prompt line, then auto-crop and resize
 src = OUT / "starship.png"
 if src.exists():
     cropped = TMP / "starship-cropped.png"
-    crop_png(src, cropped, 30, 35, 3690)
-    subprocess.run(["mv", str(cropped), str(src)])
+    crop_png(src, cropped, 30, 2000, 3690)
+    # Auto-crop blank borders and resize to match opencode ratio
+    auto_crop_and_resize(cropped, src, target_ratio=1.827)
 
 # ============================================================
 # 3. ghostty — boo animation, trimmed with gifsicle (4K)
