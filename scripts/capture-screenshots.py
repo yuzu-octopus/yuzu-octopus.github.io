@@ -298,6 +298,12 @@ Sleep 0.5s
 Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
+# Crop fastfetch to remove command input line at top
+src = OUT / "fastfetch.png"
+if src.exists():
+    cropped = TMP / "fastfetch-cropped.png"
+    crop_png(src, cropped, 30, 2000, 3690)
+    subprocess.run(["mv", str(cropped), str(src)])
 
 # ============================================================
 # 2. starship — capture prompt, strip first/last lines (4K)
@@ -310,11 +316,11 @@ Sleep 0.5s
 Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
-# Crop starship to just the prompt line (skip shell prompt above)
+# Crop starship to just the prompt line (skip command input above)
 src = OUT / "starship.png"
 if src.exists():
     cropped = TMP / "starship-cropped.png"
-    crop_png(src, cropped, 15, 60, 3690)
+    crop_png(src, cropped, 30, 35, 3690)
     subprocess.run(["mv", str(cropped), str(src)])
 
 # ============================================================
