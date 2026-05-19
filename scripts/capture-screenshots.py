@@ -95,12 +95,81 @@ def sanitize(text):
 
     return result.strip()
 
-def capture(label, cmd_args):
+def capture_fastfetch_side_by_side():
+    """Capture fastfetch logo and info separately, combine side-by-side."""
+    raw_logo = TMP / "raw-fastfetch-logo.txt"
+    raw_info = TMP / "raw-fastfetch-info.txt"
+    san = TMP / "san-fastfetch.txt"
+
+    # Capture just the logo (no info)
+    subprocess.run(
+        ["script", "-q", str(raw_logo), "fastfetch", "--structure", "none"],
+        timeout=60,
+    )
+    logo_text = open(raw_logo, errors="replace").read()
+    logo_text = logo_text.replace("\r\n", "\n").replace("\r", "\n")
+    # Clean control chars from logo
+    logo_text = re.sub(r'\x04', '', logo_text)
+    logo_text = re.sub(r'\x08', '', logo_text)
+    logo_text = logo_text.replace('^D', '')
+    logo_text = re.sub(r'\x1b\[1m', '', logo_text)
+    logo_text = re.sub(r'\x1b\[1G', '', logo_text)
+    logo_text = re.sub(r'\x1b\[\d+A', '', logo_text)
+    logo_text = re.sub(r'\x1b\[\?[0-9]+[a-z]', '', logo_text)
+    logo_text = re.sub(r'\x1b\[m', '', logo_text)
+    # Extract non-empty logo lines with their ANSI colors
+    logo_lines = []
+    for line in logo_text.split("\n"):
+        stripped = line.rstrip()
+        # Skip lines that are only ANSI codes or empty
+        display = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', stripped)
+        if display.strip():
+            logo_lines.append(stripped)
+
+    # Capture just the info (no logo)
+    subprocess.run(
+        ["script", "-q", str(raw_info), "fastfetch", "--logo-type", "none"],
+        timeout=60,
+    )
+    info_text = open(raw_info, errors="replace").read()
+    info_text = info_text.replace("\r\n", "\n").replace("\r", "\n")
+    info_lines = sanitize(info_text).split("\n")
+    # Remove empty leading/trailing lines from info
+    while info_lines and not re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', info_lines[0]).strip():
+        info_lines.pop(0)
+    while info_lines and not re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', info_lines[-1]).strip():
+        info_lines.pop()
+
+    # Pad logo lines to a fixed width for side-by-side layout
+    logo_width = max(len(re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', l)) for l in logo_lines) if logo_lines else 30
+    padding = 4  # spaces between logo and info
+
+    combined = []
+    max_lines = max(len(logo_lines), len(info_lines))
+    for i in range(max_lines):
+        logo_part = logo_lines[i] if i < len(logo_lines) else ""
+        info_part = info_lines[i] if i < len(info_lines) else ""
+        # Calculate display width of logo line (strip ANSI for measurement)
+        logo_display_width = len(re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', logo_part))
+        # Pad to align
+        pad_spaces = " " * (logo_width - logo_display_width + padding)
+        combined.append(logo_part + pad_spaces + info_part)
+
+    result = "\n".join(combined)
+    open(san, "w").write(result)
+    return san
+
+def capture(label, cmd_args, cols=200):
     """Capture command output via script(1), sanitize, return path."""
     raw = TMP / f"raw-{label}.txt"
     san = TMP / f"san-{label}.txt"
+    # Run command with wide terminal via env COLUMNS
+    env = os.environ.copy()
+    env["COLUMNS"] = str(cols)
+    env["LINES"] = "60"
     subprocess.run(
         ["script", "-q", str(raw)] + list(cmd_args),
+        env=env,
         timeout=60,
     )
     content = open(raw, errors="replace").read()
@@ -109,11 +178,35 @@ def capture(label, cmd_args):
     open(san, "w").write(sanitize(content))
     return san
 
-def crop_png(src, dst, crop_h, w):
-    """Crop TOP portion of a PNG using PIL."""
+def capture_lines(label, cmd_args, keep="middle", cols=200):
+    """Capture output, strip first/last lines, sanitize, return path."""
+    raw = TMP / f"raw-{label}.txt"
+    san = TMP / f"san-{label}.txt"
+    env = os.environ.copy()
+    env["COLUMNS"] = str(cols)
+    env["LINES"] = "60"
+    subprocess.run(
+        ["script", "-q", str(raw)] + list(cmd_args),
+        env=env,
+        timeout=60,
+    )
+    content = open(raw, errors="replace").read()
+    content = content.replace("\r\n", "\n").replace("\r", "\n")
+    lines = content.split("\n")
+    if keep == "middle" and len(lines) >= 3:
+        # Remove first line (control chars) and last line (reset/empty)
+        content = "\n".join(lines[1:-1])
+    elif keep == "middle" and len(lines) == 2:
+        # Only 2 lines: remove first, keep second
+        content = lines[1]
+    open(san, "w").write(sanitize(content))
+    return san
+
+def crop_png(src, dst, crop_y, crop_h, w):
+    """Crop a region of a PNG using PIL."""
     from PIL import Image
     img = Image.open(src)
-    cropped = img.crop((0, 0, min(w, img.width), crop_h))
+    cropped = img.crop((0, crop_y, min(w, img.width), crop_y + crop_h))
     cropped.save(dst)
 
 def optimize_gif(path):
@@ -186,10 +279,10 @@ Set Shell "{shell}"
 
 
 # ============================================================
-# 1. fastfetch — capture + sanitize + display (4K)
+# 1. fastfetch — side-by-side logo + info (4K)
 # ============================================================
 print("1/4  fastfetch")
-sf = capture("fastfetch", ["fastfetch"])
+sf = capture_fastfetch_side_by_side()
 vhs("fastfetch", f"""Type "cls"
 Enter
 Sleep 0.5s
@@ -198,22 +291,21 @@ Enter
 Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
 
 # ============================================================
-# 2. starship — capture prompt output (4K)
+# 2. starship — capture prompt, strip first/last lines (4K)
 # ============================================================
 print("2/4  starship")
-# Capture starship prompt directly
-sf = capture("starship", ["starship", "prompt"])
+sf = capture_lines("starship", ["starship", "prompt"], keep="middle")
 vhs("starship", f"""Type "cls"
 Enter
 Sleep 0.5s
 Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
-# Crop starship to just the prompt line (top portion after cat)
+# Crop starship to just the prompt line (skip shell prompt above)
 src = OUT / "starship.png"
 if src.exists():
     cropped = TMP / "starship-cropped.png"
-    crop_png(src, cropped, 120, 3690)
+    crop_png(src, cropped, 70, 80, 3690)
     subprocess.run(["mv", str(cropped), str(src)])
 
 # ============================================================
