@@ -339,8 +339,8 @@ if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 8px (just the prompt line)
-    img = img.crop((0, 8, w, h))
+    # Skip top 18px (cat command line ends at row 17, fastfetch content starts at 18)
+    img = img.crop((0, 18, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
@@ -392,8 +392,8 @@ if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 100px (cat command output)
-    img = img.crop((0, 100, w, h))
+    # Skip top 127px (cat command output, prompt starts at row 132)
+    img = img.crop((0, 127, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
@@ -441,17 +441,29 @@ if src.exists():
     else:
         cropped = img
     cw, ch = cropped.size
-    # Scale content to fill ~45% of frame height after resize
-    target_content_height = 907
-    new_h = round(ch * 2016 / target_content_height)
-    new_w = round(new_h * 3683 / 2016)
-    new_img = Image.new("RGB", (new_w, new_h), bg)
-    left_pad = (new_w - cw) // 2
-    top_pad = (new_h - ch) // 2
-    new_img.paste(cropped, (left_pad, top_pad))
-    resized = new_img.resize((3683, 2016), Image.LANCZOS)
-    resized.save(src)
-    print(f"  starship: content {cw}x{ch} → 3683x2016 (with padding)")
+    # Scale to fit width, add vertical padding to center
+    target_ratio = 3683 / 2016
+    current_ratio = cw / ch
+    if current_ratio > target_ratio:
+        # Content is wider than target ratio, scale to fit width
+        new_w = 3683
+        new_h = round(cw / target_ratio)
+    else:
+        # Content is taller than target ratio, scale to fit height
+        new_h = 2016
+        new_w = round(ch * target_ratio)
+    # Scale content to fit
+    scale = min(new_w / cw, new_h / ch)
+    scaled_w = round(cw * scale)
+    scaled_h = round(ch * scale)
+    scaled = cropped.resize((scaled_w, scaled_h), Image.LANCZOS)
+    # Center on target canvas
+    new_img = Image.new("RGB", (3683, 2016), bg)
+    paste_x = (3683 - scaled_w) // 2
+    paste_y = (2016 - scaled_h) // 2
+    new_img.paste(scaled, (paste_x, paste_y))
+    new_img.save(src)
+    print(f"  starship: content {cw}x{ch} → 3683x2016 (scaled {scale:.3f}x)")
 
 # ============================================================
 # 3. ghostty — boo animation, trimmed with gifsicle (4K)
