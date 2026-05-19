@@ -339,8 +339,8 @@ if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 35px (cat command line fully removed)
-    img = img.crop((0, 35, w, h))
+    # Skip top 50px (cat command line fully removed)
+    img = img.crop((0, 50, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
@@ -385,7 +385,7 @@ Enter
 Sleep 0.5s
 Type "cat {sf}"
 Enter
-Sleep 3s""", w=3840, h=2160, fs=75, shell="nu")
+Sleep 3s""", w=3840, h=2160, fs=60, shell="nu")
 # Crop starship: remove command input, tight crop to prompt block, add padding
 src = OUT / "starship.png"
 if src.exists():
@@ -428,6 +428,10 @@ if src.exists():
     if blocks:
         main_block = max(blocks, key=lambda b: b[2])
         top, bottom, _ = main_block
+        # Add vertical padding to include anti-aliased edges
+        v_pad = max(10, (bottom - top) // 10)
+        top = max(0, top - v_pad)
+        bottom = min(h - 1, bottom + v_pad)
         # Find left/right bounds
         left, right = w, 0
         for y in range(top, bottom + 1):
@@ -441,19 +445,9 @@ if src.exists():
     else:
         cropped = img
     cw, ch = cropped.size
-    # Scale to fit width, add vertical padding to center
-    target_ratio = 3683 / 2016
-    current_ratio = cw / ch
-    if current_ratio > target_ratio:
-        # Content is wider than target ratio, scale to fit width
-        new_w = 3683
-        new_h = round(cw / target_ratio)
-    else:
-        # Content is taller than target ratio, scale to fit height
-        new_h = 2016
-        new_w = round(ch * target_ratio)
-    # Scale content to fit
-    scale = min(new_w / cw, new_h / ch)
+    # Scale content to fill ~40% of frame height
+    target_height = 800
+    scale = target_height / ch
     scaled_w = round(cw * scale)
     scaled_h = round(ch * scale)
     scaled = cropped.resize((scaled_w, scaled_h), Image.LANCZOS)
