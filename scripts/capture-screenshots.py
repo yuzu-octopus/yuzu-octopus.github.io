@@ -339,8 +339,8 @@ if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 18px (cat command line ends at row 17, fastfetch content starts at 18)
-    img = img.crop((0, 18, w, h))
+    # Skip top 25px (cat command line fully removed)
+    img = img.crop((0, 25, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
