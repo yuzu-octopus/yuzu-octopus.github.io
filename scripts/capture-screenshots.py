@@ -332,7 +332,7 @@ Enter
 Sleep 0.5s
 Type "cat {sf}"
 Enter
-Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
+Sleep 3s""", w=3840, h=2160, fs=32, shell="nu")
 # Crop fastfetch to remove command input line
 src = OUT / "fastfetch.png"
 if src.exists():
@@ -356,15 +356,44 @@ Enter
 Sleep 0.5s
 Type "cat {sf}"
 Enter
-Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
+Sleep 3s""", w=3840, h=2160, fs=120, shell="nu")
 # Crop starship to remove command input line, then tight crop to content
 src = OUT / "starship.png"
 if src.exists():
     cropped = TMP / "starship-cropped.png"
     crop_png(src, cropped, 30, 2000, 3690)
     crop_to_content(cropped, src)
-    # Resize to match opencode dimensions
+    # Crop out bottom shell prompt — keep only the starship prompt area
     from PIL import Image
+    img = Image.open(src)
+    arr = list(img.getdata())
+    w, h = img.size
+    bg = (30, 31, 41)
+    # Find where the FIRST block of content ends
+    # Scan from top, find last row of first content block before a gap
+    first_block_end = 0
+    in_content = False
+    gap_count = 0
+    for y in range(h):
+        non_bg = 0
+        for x in range(0, w, 5):
+            idx = y * w + x
+            r, g, b = arr[idx][:3]
+            if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
+                non_bg += 1
+        if non_bg > 20:
+            in_content = True
+            first_block_end = y
+            gap_count = 0
+        elif in_content:
+            gap_count += 1
+            if gap_count > 30:  # 30 rows of gap = end of first block
+                break
+    # Crop to first content block + small padding
+    crop_h = min(first_block_end + 20, h)
+    cropped = img.crop((0, 0, w, crop_h))
+    cropped.save(src)
+    # Resize to match opencode dimensions
     img = Image.open(src)
     resized = img.resize((3683, 2016), Image.LANCZOS)
     resized.save(src)
@@ -375,7 +404,7 @@ if src.exists():
 print("3/4  ghostty")
 vhs("ghostty", """Type "ghostty +boo"
 Enter
-Sleep 6s""", w=3840, h=2160, fs=28, gif=True, shell="zsh")
+Sleep 15s""", w=3840, h=2160, fs=28, gif=True, shell="zsh")
 
 # ============================================================
 # 4. opencode — live TUI at ~ (4K)
