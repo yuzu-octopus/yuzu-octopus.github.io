@@ -416,3 +416,61 @@ Sleep 5s""", w=3840, h=2160, fs=48, shell="zsh")
 print("\nDone. Files in public/screenshots/:")
 for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
     print(f"  {p.name}  ({p.stat().st_size // 1024} KB)")
+
+# ============================================================
+# Crop blank space and resize fastfetch/starship to match opencode
+# ============================================================
+print("\nCropping and resizing fastfetch/starship to match opencode...")
+from PIL import Image
+
+TARGET_W, TARGET_H = 3683, 2016
+TARGET_RATIO = TARGET_W / TARGET_H
+BG = (30, 31, 41)
+
+for name in ["fastfetch.png", "starship.png"]:
+    src = OUT / name
+    if not src.exists():
+        continue
+    img = Image.open(src)
+    arr = list(img.getdata())
+    w, h = img.size
+
+    # Find content bounds
+    top, bottom, left, right = h, 0, w, 0
+    for y in range(h):
+        for x in range(0, w, 2):
+            idx = y * w + x
+            r, g, b = arr[idx][:3]
+            if abs(r - BG[0]) > 8 or abs(g - BG[1]) > 8 or abs(b - BG[2]) > 8:
+                if y < top: top = y
+                if y > bottom: bottom = y
+                if x < left: left = x
+                if x > right: right = x
+
+    pad = 8
+    top = max(0, top - pad)
+    bottom = min(h, bottom + pad)
+    left = max(0, left - pad)
+    right = min(w, right + pad)
+
+    cropped = img.crop((left, top, right, bottom))
+    cw, ch = cropped.size
+
+    # Add padding to match target ratio
+    current_ratio = cw / ch
+    if current_ratio > TARGET_RATIO:
+        new_h = round(cw / TARGET_RATIO)
+        v_pad = new_h - ch
+        top_pad = v_pad // 2
+        new_img = Image.new("RGB", (cw, new_h), BG)
+        new_img.paste(cropped, (0, top_pad))
+    else:
+        new_w = round(ch * TARGET_RATIO)
+        h_pad = new_w - cw
+        left_pad = h_pad // 2
+        new_img = Image.new("RGB", (new_w, ch), BG)
+        new_img.paste(cropped, (left_pad, 0))
+
+    resized = new_img.resize((TARGET_W, TARGET_H), Image.LANCZOS)
+    resized.save(src)
+    print(f"  {name}: {cw}x{ch} content → {TARGET_W}x{TARGET_H}")
