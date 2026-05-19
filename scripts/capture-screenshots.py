@@ -333,19 +333,47 @@ Sleep 0.5s
 Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=40, shell="nu")
-# Crop fastfetch to remove command input line
+# Crop fastfetch: remove command input line, left-align content
 src = OUT / "fastfetch.png"
 if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 30px (command input), keep rest
-    cropped = img.crop((0, 30, w, h))
-    cropped.save(src)
-    # Resize to match opencode dimensions
-    img = Image.open(src)
-    resized = img.resize((3683, 2016), Image.LANCZOS)
+    # Skip top 30px (command input)
+    img = img.crop((0, 30, w, h))
+    w, h = img.size
+    arr = list(img.getdata())
+    bg = (30, 31, 41)
+    # Find content bounds
+    top, bottom, left, right = h, 0, w, 0
+    for y in range(h):
+        for x in range(0, w, 2):
+            idx = y * w + x
+            r, g, b = arr[idx][:3]
+            if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
+                if y < top: top = y
+                if y > bottom: bottom = y
+                if x < left: left = x
+                if x > right: right = x
+    pad = 8
+    top = max(0, top - pad)
+    bottom = min(h, bottom + pad)
+    left = max(0, left - pad)
+    right = min(w, right + pad)
+    cropped = img.crop((left, top, right, bottom))
+    cw, ch = cropped.size
+    # Add padding on right side to match target ratio (left-aligned)
+    target_ratio = 3683 / 2016
+    current_ratio = cw / ch
+    if current_ratio < target_ratio:
+        new_w = round(ch * target_ratio)
+        new_img = Image.new("RGB", (new_w, ch), bg)
+        new_img.paste(cropped, (0, 0))
+    else:
+        new_img = cropped
+    resized = new_img.resize((3683, 2016), Image.LANCZOS)
     resized.save(src)
+    print(f"  fastfetch: content {cw}x{ch} → 3683x2016")
 
 # ============================================================
 # 2. starship — capture prompt, strip first/last lines (4K)
@@ -358,41 +386,53 @@ Sleep 0.5s
 Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=200, shell="nu")
-# Crop starship to remove command input line and bottom shell prompt
+# Crop starship: remove command input, tight crop to prompt, scale up
 src = OUT / "starship.png"
 if src.exists():
     from PIL import Image
     img = Image.open(src)
-    arr = list(img.getdata())
     w, h = img.size
+    # Skip top 30px (command input)
+    img = img.crop((0, 30, w, h))
+    w, h = img.size
+    arr = list(img.getdata())
     bg = (30, 31, 41)
-    # Find where the FIRST content block ends (starship prompt)
-    in_content = False
-    gap_start = None
+    # Find content bounds
+    top, bottom, left, right = h, 0, w, 0
     for y in range(h):
-        non_bg = 0
-        for x in range(0, w, 3):
+        for x in range(0, w, 2):
             idx = y * w + x
             r, g, b = arr[idx][:3]
             if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
-                non_bg += 1
-        if non_bg > 30:
-            in_content = True
-            gap_start = None
-        elif in_content and gap_start is None:
-            gap_start = y
-        elif in_content and gap_start is not None and (y - gap_start) > 40:
-            content_bottom = gap_start
-            break
+                if y < top: top = y
+                if y > bottom: bottom = y
+                if x < left: left = x
+                if x > right: right = x
+    pad = 8
+    top = max(0, top - pad)
+    bottom = min(h, bottom + pad)
+    left = max(0, left - pad)
+    right = min(w, right + pad)
+    cropped = img.crop((left, top, right, bottom))
+    cw, ch = cropped.size
+    # Add padding to match target ratio
+    target_ratio = 3683 / 2016
+    current_ratio = cw / ch
+    if current_ratio > target_ratio:
+        new_h = round(cw / target_ratio)
+        v_pad = new_h - ch
+        top_pad = v_pad // 2
+        new_img = Image.new("RGB", (cw, new_h), bg)
+        new_img.paste(cropped, (0, top_pad))
     else:
-        content_bottom = h
-
-    cropped = img.crop((0, 30, w, content_bottom))
-    cropped.save(src)
-    # Resize to match opencode dimensions
-    img = Image.open(src)
-    resized = img.resize((3683, 2016), Image.LANCZOS)
+        new_w = round(ch * target_ratio)
+        h_pad = new_w - cw
+        left_pad = h_pad // 2
+        new_img = Image.new("RGB", (new_w, ch), bg)
+        new_img.paste(cropped, (left_pad, 0))
+    resized = new_img.resize((3683, 2016), Image.LANCZOS)
     resized.save(src)
+    print(f"  starship: content {cw}x{ch} → 3683x2016")
 
 # ============================================================
 # 3. ghostty — boo animation, trimmed with gifsicle (4K)
@@ -416,61 +456,3 @@ Sleep 5s""", w=3840, h=2160, fs=48, shell="zsh")
 print("\nDone. Files in public/screenshots/:")
 for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
     print(f"  {p.name}  ({p.stat().st_size // 1024} KB)")
-
-# ============================================================
-# Crop blank space and resize fastfetch/starship to match opencode
-# ============================================================
-print("\nCropping and resizing fastfetch/starship to match opencode...")
-from PIL import Image
-
-TARGET_W, TARGET_H = 3683, 2016
-TARGET_RATIO = TARGET_W / TARGET_H
-BG = (30, 31, 41)
-
-for name in ["fastfetch.png", "starship.png"]:
-    src = OUT / name
-    if not src.exists():
-        continue
-    img = Image.open(src)
-    arr = list(img.getdata())
-    w, h = img.size
-
-    # Find content bounds
-    top, bottom, left, right = h, 0, w, 0
-    for y in range(h):
-        for x in range(0, w, 2):
-            idx = y * w + x
-            r, g, b = arr[idx][:3]
-            if abs(r - BG[0]) > 8 or abs(g - BG[1]) > 8 or abs(b - BG[2]) > 8:
-                if y < top: top = y
-                if y > bottom: bottom = y
-                if x < left: left = x
-                if x > right: right = x
-
-    pad = 8
-    top = max(0, top - pad)
-    bottom = min(h, bottom + pad)
-    left = max(0, left - pad)
-    right = min(w, right + pad)
-
-    cropped = img.crop((left, top, right, bottom))
-    cw, ch = cropped.size
-
-    # Add padding to match target ratio
-    current_ratio = cw / ch
-    if current_ratio > TARGET_RATIO:
-        new_h = round(cw / TARGET_RATIO)
-        v_pad = new_h - ch
-        top_pad = v_pad // 2
-        new_img = Image.new("RGB", (cw, new_h), BG)
-        new_img.paste(cropped, (0, top_pad))
-    else:
-        new_w = round(ch * TARGET_RATIO)
-        h_pad = new_w - cw
-        left_pad = h_pad // 2
-        new_img = Image.new("RGB", (new_w, ch), BG)
-        new_img.paste(cropped, (left_pad, 0))
-
-    resized = new_img.resize((TARGET_W, TARGET_H), Image.LANCZOS)
-    resized.save(src)
-    print(f"  {name}: {cw}x{ch} content → {TARGET_W}x{TARGET_H}")
