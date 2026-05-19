@@ -52,18 +52,33 @@ export function ConfigCard({ config }: ConfigCardProps) {
           sx={{
             backgroundColor: draculaColors.currentLine,
             borderRadius: 1,
-            p: 2,
+            p: 0,
             mb: 2,
-            minHeight: 120,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: `1px dashed ${draculaColors.comment}`,
+            overflow: 'hidden',
+            border: `1px solid ${draculaColors.comment}`,
           }}
         >
-          <Typography variant="caption" sx={{ color: draculaColors.comment }}>
-            Screenshot: {config.name}
-          </Typography>
+          <img
+            src={config.screenshot}
+            alt={config.name}
+            style={{
+              display: 'block',
+              width: '100%',
+              height: 'auto',
+              objectFit: 'contain',
+            }}
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+              const parent = (e.target as HTMLImageElement).parentElement;
+              if (parent) {
+                parent.style.display = 'flex';
+                parent.style.alignItems = 'center';
+                parent.style.justifyContent = 'center';
+                parent.style.minHeight = '120px';
+                parent.innerHTML = `<span style="color: ${draculaColors.comment}; font-size: 0.75rem;">Screenshot unavailable</span>`;
+              }
+            }}
+          />
         </Box>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Box

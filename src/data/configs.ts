@@ -564,7 +564,7 @@ comment = "#6272a4"`,
     id: 'ghostty',
     name: 'Ghostty',
     description: 'GPU-accelerated terminal with Dracula theme, transparency, and Nerd Font',
-    screenshot: '/screenshots/ghostty.png',
+    screenshot: '/screenshots/ghostty.gif',
     sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/ghostty/config',
     language: 'ini',
     code: `#command = /opt/homebrew/bin/nu
