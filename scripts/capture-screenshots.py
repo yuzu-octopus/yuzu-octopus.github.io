@@ -383,6 +383,31 @@ print("3/4  ghostty")
 vhs("ghostty", """Type "ghostty +boo"
 Enter
 Sleep 6s""", w=3840, h=2160, fs=28, gif=True, shell="zsh")
+# Crop ghostty to match 1.827 ratio (3840x2160 → 3840x2102)
+src = OUT / "ghostty.gif"
+if src.exists():
+    from PIL import Image
+    img = Image.open(src)
+    w, h = img.size
+    target_h = round(w / 1.827)
+    crop_y = (h - target_h) // 2  # center crop
+    frames = []
+    try:
+        while True:
+            frame = img.copy()
+            frame = frame.crop((0, crop_y, w, crop_y + target_h))
+            frames.append(frame)
+            img.seek(img.tell() + 1)
+    except EOFError:
+        pass
+    frames[0].save(
+        str(src),
+        save_all=True,
+        append_images=frames[1:],
+        duration=img.info.get('duration', 100),
+        loop=img.info.get('loop', 0),
+        disposal=img.info.get('disposal', 2),
+    )
 
 # ============================================================
 # 4. opencode — live TUI at ~ (4K)
@@ -398,3 +423,52 @@ Sleep 5s""", w=3840, h=2160, fs=48, shell="zsh")
 print("\nDone. Files in public/screenshots/:")
 for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
     print(f"  {p.name}  ({p.stat().st_size // 1024} KB)")
+
+# ============================================================
+# Resize all screenshots to the same dimensions
+# ============================================================
+print("\nResizing all screenshots to same dimensions...")
+from PIL import Image
+
+# Find the smallest dimensions across all screenshots
+min_w, min_h = float('inf'), float('inf')
+for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
+    if p.suffix == '.gif':
+        img = Image.open(p)
+        w, h = img.size
+    else:
+        img = Image.open(p)
+        w, h = img.size
+    if w < min_w: min_w = w
+    if h < min_h: min_h = h
+
+# Round down to nearest multiple of 4 (for GIF compatibility)
+target_w = (int(min_w) // 4) * 4
+target_h = (int(min_h) // 4) * 4
+print(f"  Target: {target_w}x{target_h}")
+
+for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
+    if p.suffix == '.gif':
+        img = Image.open(p)
+        frames = []
+        try:
+            while True:
+                frame = img.copy().resize((target_w, target_h), Image.LANCZOS)
+                frames.append(frame)
+                img.seek(img.tell() + 1)
+        except EOFError:
+            pass
+        frames[0].save(
+            str(p),
+            save_all=True,
+            append_images=frames[1:],
+            duration=img.info.get('duration', 100),
+            loop=img.info.get('loop', 0),
+            disposal=img.info.get('disposal', 2),
+        )
+    else:
+        img = Image.open(p)
+        resized = img.resize((target_w, target_h), Image.LANCZOS)
+        resized.save(p)
+    sz = p.stat().st_size // 1024
+    print(f"  {p.name}: {target_w}x{target_h} ({sz} KB)")
