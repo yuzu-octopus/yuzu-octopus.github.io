@@ -339,8 +339,8 @@ if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 30px (command input)
-    img = img.crop((0, 30, w, h))
+    # Skip top 100px (command input line and prompt)
+    img = img.crop((0, 100, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
@@ -376,7 +376,7 @@ if src.exists():
     print(f"  fastfetch: content {cw}x{ch} → 3683x2016")
 
 # ============================================================
-# 2. starship — capture prompt, strip first/last lines (4K)
+# 2. starship — capture prompt, single line with padding (4K)
 # ============================================================
 print("2/4  starship")
 sf = capture_lines("starship", ["starship", "prompt"], keep="middle")
@@ -385,15 +385,15 @@ Enter
 Sleep 0.5s
 Type "cat {sf}"
 Enter
-Sleep 3s""", w=3840, h=2160, fs=200, shell="nu")
-# Crop starship: remove command input, tight crop to prompt, scale up
+Sleep 3s""", w=3840, h=2160, fs=100, shell="nu")
+# Crop starship: remove command input, tight crop to single-line prompt, add padding
 src = OUT / "starship.png"
 if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 30px (command input)
-    img = img.crop((0, 30, w, h))
+    # Skip top 80px (command input line)
+    img = img.crop((0, 80, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
@@ -408,31 +408,19 @@ if src.exists():
                 if y > bottom: bottom = y
                 if x < left: left = x
                 if x > right: right = x
-    pad = 8
-    top = max(0, top - pad)
-    bottom = min(h, bottom + pad)
-    left = max(0, left - pad)
-    right = min(w, right + pad)
-    cropped = img.crop((left, top, right, bottom))
+    # Tight crop to content
+    cropped = img.crop((left, top, right + 1, bottom + 1))
     cw, ch = cropped.size
-    # Add padding to match target ratio
-    target_ratio = 3683 / 2016
-    current_ratio = cw / ch
-    if current_ratio > target_ratio:
-        new_h = round(cw / target_ratio)
-        v_pad = new_h - ch
-        top_pad = v_pad // 2
-        new_img = Image.new("RGB", (cw, new_h), bg)
-        new_img.paste(cropped, (0, top_pad))
-    else:
-        new_w = round(ch * target_ratio)
-        h_pad = new_w - cw
-        left_pad = h_pad // 2
-        new_img = Image.new("RGB", (new_w, ch), bg)
-        new_img.paste(cropped, (left_pad, 0))
+    # Add generous padding around prompt (center it)
+    pad_x = cw // 2
+    pad_y = ch * 4  # Large vertical padding
+    new_w = cw + pad_x * 2
+    new_h = ch + pad_y * 2
+    new_img = Image.new("RGB", (new_w, new_h), bg)
+    new_img.paste(cropped, (pad_x, pad_y))
     resized = new_img.resize((3683, 2016), Image.LANCZOS)
     resized.save(src)
-    print(f"  starship: content {cw}x{ch} → 3683x2016")
+    print(f"  starship: content {cw}x{ch} → 3683x2016 (with padding)")
 
 # ============================================================
 # 3. ghostty — boo animation, trimmed with gifsicle (4K)
@@ -452,6 +440,17 @@ Sleep 1s
 Type "opencode"
 Enter
 Sleep 5s""", w=3840, h=2160, fs=48, shell="zsh")
+# Adjust opencode: add small vertical padding to match other screenshots
+src = OUT / "opencode.png"
+if src.exists():
+    from PIL import Image
+    img = Image.open(src)
+    w, h = img.size
+    # Crop 40px from top and bottom, then resize back to fill frame
+    img = img.crop((0, 40, w, h - 40))
+    resized = img.resize((3683, 2016), Image.LANCZOS)
+    resized.save(src)
+    print(f"  opencode: adjusted vertical padding → 3683x2016")
 
 print("\nDone. Files in public/screenshots/:")
 for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
