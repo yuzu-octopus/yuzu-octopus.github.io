@@ -340,6 +340,11 @@ if src.exists():
     crop_png(src, cropped, 30, 2100, 3690)
     # Tight crop to content
     crop_to_content(cropped, src)
+    # Resize to match opencode dimensions
+    from PIL import Image
+    img = Image.open(src)
+    resized = img.resize((3683, 2016), Image.LANCZOS)
+    resized.save(src)
 
 # ============================================================
 # 2. starship — capture prompt, strip first/last lines (4K)
@@ -358,6 +363,11 @@ if src.exists():
     cropped = TMP / "starship-cropped.png"
     crop_png(src, cropped, 30, 2000, 3690)
     crop_to_content(cropped, src)
+    # Resize to match opencode dimensions
+    from PIL import Image
+    img = Image.open(src)
+    resized = img.resize((3683, 2016), Image.LANCZOS)
+    resized.save(src)
 
 # ============================================================
 # 3. ghostty — boo animation, trimmed with gifsicle (4K)
@@ -366,73 +376,6 @@ print("3/4  ghostty")
 vhs("ghostty", """Type "ghostty +boo"
 Enter
 Sleep 6s""", w=3840, h=2160, fs=28, gif=True, shell="zsh")
-# Tight crop ghostty to content
-src = OUT / "ghostty.gif"
-if src.exists():
-    from PIL import Image
-    img = Image.open(src)
-    # Use a middle frame (frame ~15) to find content bounds — first frame is blank
-    mid_frame_idx = 15
-    try:
-        for i in range(mid_frame_idx):
-            img.seek(i)
-        mid_frame = img.copy()
-        if mid_frame.mode != 'RGB':
-            mid_frame = mid_frame.convert('RGB')
-        mid_frame.save(str(TMP / "ghostty-mid.png"))
-        crop_to_content(TMP / "ghostty-mid.png", TMP / "ghostty-cropped-mid.png")
-    except EOFError:
-        # Fallback: use last available frame
-        img.seek(0)
-        try:
-            while True:
-                img.seek(img.tell() + 1)
-        except EOFError:
-            pass
-        mid_frame = img.copy()
-        if mid_frame.mode != 'RGB':
-            mid_frame = mid_frame.convert('RGB')
-        mid_frame.save(str(TMP / "ghostty-mid.png"))
-        crop_to_content(TMP / "ghostty-mid.png", TMP / "ghostty-cropped-mid.png")
-        img.seek(0)
-    bounds_img = Image.open(TMP / "ghostty-cropped-mid.png")
-    bw, bh = bounds_img.size
-    # Crop all frames to same bounds
-    arr = list(mid_frame.getdata())
-    fw, fh = mid_frame.size
-    bg = (30, 31, 41)
-    top, bottom, left, right = fh, 0, fw, 0
-    for y in range(fh):
-        for x in range(0, fw, 4):
-            idx = y * fw + x
-            r, g, b = arr[idx][:3]
-            if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
-                if y < top: top = y
-                if y > bottom: bottom = y
-                if x < left: left = x
-                if x > right: right = x
-    pad = 8
-    top = max(0, top - pad)
-    bottom = min(fh, bottom + pad)
-    left = max(0, left - pad)
-    right = min(fw, right + pad)
-
-    frames = []
-    try:
-        while True:
-            frame = img.copy().crop((left, top, right, bottom))
-            frames.append(frame)
-            img.seek(img.tell() + 1)
-    except EOFError:
-        pass
-    frames[0].save(
-        str(src),
-        save_all=True,
-        append_images=frames[1:],
-        duration=img.info.get('duration', 100),
-        loop=img.info.get('loop', 0),
-        disposal=img.info.get('disposal', 2),
-    )
 
 # ============================================================
 # 4. opencode — live TUI at ~ (4K)
@@ -448,100 +391,3 @@ Sleep 5s""", w=3840, h=2160, fs=48, shell="zsh")
 print("\nDone. Files in public/screenshots/:")
 for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
     print(f"  {p.name}  ({p.stat().st_size // 1024} KB)")
-
-# ============================================================
-# Crop all to content, then resize to same dimensions
-# ============================================================
-print("\nResizing all screenshots to same dimensions...")
-from PIL import Image
-
-# Step 1: Crop each to content
-for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
-    if p.suffix == '.gif':
-        img = Image.open(p)
-        first = img.copy()
-        if first.mode != 'RGB':
-            first = first.convert('RGB')
-        first.save(str(TMP / "gif-first.png"))
-        crop_to_content(TMP / "gif-first.png", TMP / "gif-cropped.png")
-        bounds = Image.open(TMP / "gif-cropped.png")
-        bw, bh = bounds.size
-        # Find bounds from original
-        arr = list(first.getdata())
-        fw, fh = first.size
-        bg = (30, 31, 41)
-        top, bottom, left, right = fh, 0, fw, 0
-        for y in range(fh):
-            for x in range(0, fw, 4):
-                idx = y * fw + x
-                r, g, b = arr[idx][:3]
-                if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
-                    if y < top: top = y
-                    if y > bottom: bottom = y
-                    if x < left: left = x
-                    if x > right: right = x
-        pad = 8
-        crop_box = (max(0, left - pad), max(0, top - pad), min(fw, right + pad), min(fh, bottom + pad))
-        frames = []
-        try:
-            while True:
-                frame = img.copy().crop(crop_box)
-                frames.append(frame)
-                img.seek(img.tell() + 1)
-        except EOFError:
-            pass
-        frames[0].save(
-            str(p),
-            save_all=True,
-            append_images=frames[1:],
-            duration=img.info.get('duration', 100),
-            loop=img.info.get('loop', 0),
-            disposal=img.info.get('disposal', 2),
-        )
-    else:
-        crop_to_content(p, TMP / f"{p.stem}-content.png")
-        subprocess.run(["mv", str(TMP / f"{p.stem}-content.png"), str(p)])
-
-# Step 2: Find smallest dimensions across all cropped screenshots
-min_w, min_h = float('inf'), float('inf')
-for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
-    if p.suffix == '.gif':
-        img = Image.open(p)
-        w, h = img.size
-    else:
-        img = Image.open(p)
-        w, h = img.size
-    if w < min_w: min_w = w
-    if h < min_h: min_h = h
-
-# Round down to nearest multiple of 4 (GIF compatibility)
-target_w = (int(min_w) // 4) * 4
-target_h = (int(min_h) // 4) * 4
-print(f"  Target: {target_w}x{target_h}")
-
-# Step 3: Resize all to target
-for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
-    if p.suffix == '.gif':
-        img = Image.open(p)
-        frames = []
-        try:
-            while True:
-                frame = img.copy().resize((target_w, target_h), Image.LANCZOS)
-                frames.append(frame)
-                img.seek(img.tell() + 1)
-        except EOFError:
-            pass
-        frames[0].save(
-            str(p),
-            save_all=True,
-            append_images=frames[1:],
-            duration=img.info.get('duration', 100),
-            loop=img.info.get('loop', 0),
-            disposal=img.info.get('disposal', 2),
-        )
-    else:
-        img = Image.open(p)
-        resized = img.resize((target_w, target_h), Image.LANCZOS)
-        resized.save(p)
-    sz = p.stat().st_size // 1024
-    print(f"  {p.name}: {target_w}x{target_h} ({sz} KB)")
