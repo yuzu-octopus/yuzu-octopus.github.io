@@ -218,56 +218,40 @@ def crop_png(src, dst, crop_y, crop_h, w):
     cropped = img.crop((0, crop_y, min(w, img.width), crop_y + crop_h))
     cropped.save(dst)
 
-def auto_crop_and_resize(src, dst, target_ratio=None):
-    """Auto-detect content bounds, crop blank borders, resize to target aspect ratio."""
+def crop_to_content(src, dst, bg=(30, 31, 41), threshold=8, pad=8):
+    """Crop tightly to content, removing all blank borders."""
     from PIL import Image
     img = Image.open(src)
+    if img.mode != 'RGB':
+        img = img.convert('RGB')
     arr = list(img.getdata())
     w, h = img.size
-    bg = (30, 31, 41)  # Dracula background
 
-    # Find content bounds
+    # Find content bounds by scanning every row/column
     top, bottom, left, right = h, 0, w, 0
+    step = 4
     for y in range(h):
-        for x in range(0, w, 4):
+        for x in range(0, w, step):
             idx = y * w + x
             r, g, b = arr[idx][:3]
-            if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
+            if abs(r - bg[0]) > threshold or abs(g - bg[1]) > threshold or abs(b - bg[2]) > threshold:
                 if y < top: top = y
                 if y > bottom: bottom = y
                 if x < left: left = x
                 if x > right: right = x
 
     if bottom <= top or right <= left:
-        # No content found, save as-is
         img.save(dst)
         return
 
-    # Add small padding around content
-    pad = 4
+    # Add padding
     top = max(0, top - pad)
     bottom = min(h, bottom + pad)
     left = max(0, left - pad)
     right = min(w, right + pad)
 
     cropped = img.crop((left, top, right, bottom))
-    cw, ch = cropped.size
-
-    # Resize to target aspect ratio if specified
-    if target_ratio:
-        current_ratio = cw / ch
-        if current_ratio > target_ratio:
-            # Too wide: resize based on width
-            new_h = round(cw / target_ratio)
-            new_w = cw
-        else:
-            # Too tall: resize based on height
-            new_w = round(ch * target_ratio)
-            new_h = ch
-        resized = cropped.resize((new_w, new_h), Image.LANCZOS)
-        resized.save(dst)
-    else:
-        cropped.save(dst)
+    cropped.save(dst)
 
 def optimize_gif(path):
     """Optimize GIF with gifsicle to reduce file size."""
@@ -349,13 +333,13 @@ Sleep 0.5s
 Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
-# Crop fastfetch to remove command input line, then auto-crop and resize
+# Crop fastfetch to remove command input line
 src = OUT / "fastfetch.png"
 if src.exists():
     cropped = TMP / "fastfetch-cropped.png"
     crop_png(src, cropped, 30, 2100, 3690)
-    # Auto-crop blank borders and resize to match opencode ratio
-    auto_crop_and_resize(cropped, src, target_ratio=1.827)
+    # Tight crop to content
+    crop_to_content(cropped, src)
 
 # ============================================================
 # 2. starship — capture prompt, strip first/last lines (4K)
@@ -368,13 +352,12 @@ Sleep 0.5s
 Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=24, shell="nu")
-# Crop starship to just the prompt line, then auto-crop and resize
+# Crop starship to remove command input line, then tight crop to content
 src = OUT / "starship.png"
 if src.exists():
     cropped = TMP / "starship-cropped.png"
     crop_png(src, cropped, 30, 2000, 3690)
-    # Auto-crop blank borders and resize to match opencode ratio
-    auto_crop_and_resize(cropped, src, target_ratio=1.827)
+    crop_to_content(cropped, src)
 
 # ============================================================
 # 3. ghostty — boo animation, trimmed with gifsicle (4K)
@@ -383,19 +366,61 @@ print("3/4  ghostty")
 vhs("ghostty", """Type "ghostty +boo"
 Enter
 Sleep 6s""", w=3840, h=2160, fs=28, gif=True, shell="zsh")
-# Crop ghostty to match 1.827 ratio (3840x2160 → 3840x2102)
+# Tight crop ghostty to content
 src = OUT / "ghostty.gif"
 if src.exists():
     from PIL import Image
     img = Image.open(src)
-    w, h = img.size
-    target_h = round(w / 1.827)
-    crop_y = (h - target_h) // 2  # center crop
+    # Use a middle frame (frame ~15) to find content bounds — first frame is blank
+    mid_frame_idx = 15
+    try:
+        for i in range(mid_frame_idx):
+            img.seek(i)
+        mid_frame = img.copy()
+        if mid_frame.mode != 'RGB':
+            mid_frame = mid_frame.convert('RGB')
+        mid_frame.save(str(TMP / "ghostty-mid.png"))
+        crop_to_content(TMP / "ghostty-mid.png", TMP / "ghostty-cropped-mid.png")
+    except EOFError:
+        # Fallback: use last available frame
+        img.seek(0)
+        try:
+            while True:
+                img.seek(img.tell() + 1)
+        except EOFError:
+            pass
+        mid_frame = img.copy()
+        if mid_frame.mode != 'RGB':
+            mid_frame = mid_frame.convert('RGB')
+        mid_frame.save(str(TMP / "ghostty-mid.png"))
+        crop_to_content(TMP / "ghostty-mid.png", TMP / "ghostty-cropped-mid.png")
+        img.seek(0)
+    bounds_img = Image.open(TMP / "ghostty-cropped-mid.png")
+    bw, bh = bounds_img.size
+    # Crop all frames to same bounds
+    arr = list(mid_frame.getdata())
+    fw, fh = mid_frame.size
+    bg = (30, 31, 41)
+    top, bottom, left, right = fh, 0, fw, 0
+    for y in range(fh):
+        for x in range(0, fw, 4):
+            idx = y * fw + x
+            r, g, b = arr[idx][:3]
+            if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
+                if y < top: top = y
+                if y > bottom: bottom = y
+                if x < left: left = x
+                if x > right: right = x
+    pad = 8
+    top = max(0, top - pad)
+    bottom = min(fh, bottom + pad)
+    left = max(0, left - pad)
+    right = min(fw, right + pad)
+
     frames = []
     try:
         while True:
-            frame = img.copy()
-            frame = frame.crop((0, crop_y, w, crop_y + target_h))
+            frame = img.copy().crop((left, top, right, bottom))
             frames.append(frame)
             img.seek(img.tell() + 1)
     except EOFError:
@@ -425,12 +450,59 @@ for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
     print(f"  {p.name}  ({p.stat().st_size // 1024} KB)")
 
 # ============================================================
-# Resize all screenshots to the same dimensions
+# Crop all to content, then resize to same dimensions
 # ============================================================
 print("\nResizing all screenshots to same dimensions...")
 from PIL import Image
 
-# Find the smallest dimensions across all screenshots
+# Step 1: Crop each to content
+for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
+    if p.suffix == '.gif':
+        img = Image.open(p)
+        first = img.copy()
+        if first.mode != 'RGB':
+            first = first.convert('RGB')
+        first.save(str(TMP / "gif-first.png"))
+        crop_to_content(TMP / "gif-first.png", TMP / "gif-cropped.png")
+        bounds = Image.open(TMP / "gif-cropped.png")
+        bw, bh = bounds.size
+        # Find bounds from original
+        arr = list(first.getdata())
+        fw, fh = first.size
+        bg = (30, 31, 41)
+        top, bottom, left, right = fh, 0, fw, 0
+        for y in range(fh):
+            for x in range(0, fw, 4):
+                idx = y * fw + x
+                r, g, b = arr[idx][:3]
+                if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
+                    if y < top: top = y
+                    if y > bottom: bottom = y
+                    if x < left: left = x
+                    if x > right: right = x
+        pad = 8
+        crop_box = (max(0, left - pad), max(0, top - pad), min(fw, right + pad), min(fh, bottom + pad))
+        frames = []
+        try:
+            while True:
+                frame = img.copy().crop(crop_box)
+                frames.append(frame)
+                img.seek(img.tell() + 1)
+        except EOFError:
+            pass
+        frames[0].save(
+            str(p),
+            save_all=True,
+            append_images=frames[1:],
+            duration=img.info.get('duration', 100),
+            loop=img.info.get('loop', 0),
+            disposal=img.info.get('disposal', 2),
+        )
+    else:
+        crop_to_content(p, TMP / f"{p.stem}-content.png")
+        subprocess.run(["mv", str(TMP / f"{p.stem}-content.png"), str(p)])
+
+# Step 2: Find smallest dimensions across all cropped screenshots
 min_w, min_h = float('inf'), float('inf')
 for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
     if p.suffix == '.gif':
@@ -442,11 +514,12 @@ for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
     if w < min_w: min_w = w
     if h < min_h: min_h = h
 
-# Round down to nearest multiple of 4 (for GIF compatibility)
+# Round down to nearest multiple of 4 (GIF compatibility)
 target_w = (int(min_w) // 4) * 4
 target_h = (int(min_h) // 4) * 4
 print(f"  Target: {target_w}x{target_h}")
 
+# Step 3: Resize all to target
 for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
     if p.suffix == '.gif':
         img = Image.open(p)
