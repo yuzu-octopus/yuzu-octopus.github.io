@@ -4,7 +4,6 @@ export interface Tool {
   category: string;
   description: string;
   url?: string;
-  icon?: string;
 }
 
 export const tools: Tool[] = [

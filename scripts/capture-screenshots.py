@@ -466,7 +466,7 @@ Sleep 15s""", w=3840, h=2160, fs=28, gif=True, shell="zsh")
 # ============================================================
 # 4. opencode — live TUI at ~ (4K)
 # ============================================================
-print("4/4  opencode")
+print("4/5  opencode")
 vhs("opencode", """Type "cd ~"
 Enter
 Sleep 1s
@@ -506,6 +506,21 @@ if src.exists():
     new_img.paste(scaled, (paste_x, paste_y))
     new_img.save(src)
     print(f"  opencode: content {cw}x{ch} → 3683x2016 (scaled {scale:.3f}x, 10% padding)")
+
+# ============================================================
+# 5. code-runner — hello world + 1..5 counting (GIF, 4K)
+# ============================================================
+print("5/5  code-runner")
+# Write the demo script before VHS so the tape shows only execution
+with open("/tmp/demo.py", "w") as f:
+    f.write("import time\n")
+    f.write("print('hello world')\n")
+    f.write("for i in range(1, 6):\n")
+    f.write("    print(i)\n")
+    f.write("    time.sleep(1)\n")
+vhs("code-runner", """Type "code_runner /tmp/demo.py"
+Enter
+Sleep 14s""", w=3840, h=2160, fs=48, gif=True, shell="zsh")
 
 print("\nDone. Files in public/screenshots/:")
 for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):

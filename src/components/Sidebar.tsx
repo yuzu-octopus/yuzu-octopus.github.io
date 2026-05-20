@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Drawer,
   List,
@@ -10,13 +11,17 @@ import {
   Avatar,
   Typography,
   Link,
+  IconButton,
+  useMediaQuery,
 } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import CodeIcon from '@mui/icons-material/Code';
 import DesktopMacIcon from '@mui/icons-material/DesktopMac';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { draculaColors } from '../theme/dracula';
+import { SITE } from '../data/site';
 
 const navItems = [
   { text: 'Home', icon: <HomeIcon />, href: '#hero' },
@@ -27,26 +32,12 @@ const navItems = [
 
 export const drawerWidth = 240;
 
-export function Sidebar() {
+function DrawerContent({ onNavClick }: { onNavClick?: () => void }) {
   return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: drawerWidth,
-          boxSizing: 'border-box',
-          backgroundColor: draculaColors.currentLine,
-          borderRight: `1px solid ${draculaColors.comment}`,
-          display: 'flex',
-          flexDirection: 'column',
-        },
-      }}
-    >
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ p: 2, textAlign: 'center' }}>
         <Avatar
-          src="https://avatars.githubusercontent.com/u/275212760?v=4"
+          src={SITE.avatarUrl}
           sx={{ width: 80, height: 80, margin: '0 auto', mb: 1 }}
         />
         <Typography variant="h6" sx={{ color: draculaColors.purple, fontWeight: 700 }}>
@@ -60,7 +51,11 @@ export function Sidebar() {
       <List sx={{ flex: 1 }}>
         {navItems.map((item) => (
           <ListItem key={item.text} disablePadding>
-            <ListItemButton component="a" href={item.href}>
+            <ListItemButton
+              component="a"
+              href={item.href}
+              onClick={onNavClick}
+            >
               <ListItemIcon sx={{ color: draculaColors.foreground }}>
                 {item.icon}
               </ListItemIcon>
@@ -74,7 +69,7 @@ export function Sidebar() {
         <ListItem disablePadding>
           <ListItemButton
             component="a"
-            href="https://github.com/yuzu-octopus"
+            href={SITE.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -87,7 +82,7 @@ export function Sidebar() {
       </List>
       <Box sx={{ p: 2 }}>
         <Typography variant="caption" sx={{ color: draculaColors.comment, display: 'block' }}>
-          © 2026 yuzu-octopus
+          © 2026 {SITE.githubUsername}
         </Typography>
         <Typography variant="caption" sx={{ color: draculaColors.comment, display: 'block' }}>
           Powered by{' '}
@@ -102,6 +97,70 @@ export function Sidebar() {
           </Link>
         </Typography>
       </Box>
-    </Drawer>
+    </Box>
+  );
+}
+
+export function Sidebar() {
+  const isDesktop = useMediaQuery('(min-width:900px)');
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  if (isDesktop) {
+    return (
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+            backgroundColor: draculaColors.currentLine,
+            borderRight: `1px solid ${draculaColors.comment}`,
+          },
+        }}
+      >
+        <DrawerContent />
+      </Drawer>
+    );
+  }
+
+  return (
+    <>
+      <IconButton
+        aria-label="open navigation menu"
+        onClick={() => setMobileOpen(true)}
+        sx={{
+          position: 'fixed',
+          top: 12,
+          left: 12,
+          zIndex: 1200,
+          color: draculaColors.foreground,
+          backgroundColor: draculaColors.currentLine,
+          border: `1px solid ${draculaColors.comment}`,
+          '&:hover': {
+            backgroundColor: draculaColors.comment,
+          },
+        }}
+      >
+        <MenuIcon />
+      </IconButton>
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+            backgroundColor: draculaColors.currentLine,
+            borderRight: `1px solid ${draculaColors.comment}`,
+          },
+        }}
+      >
+        <DrawerContent onNavClick={() => setMobileOpen(false)} />
+      </Drawer>
+    </>
   );
 }

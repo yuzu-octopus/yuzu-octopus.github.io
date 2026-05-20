@@ -1,5 +1,6 @@
 import { Container, Typography, Paper } from '@mui/material';
 import { draculaColors } from '../theme/dracula';
+import { SectionHeading } from './SectionHeading';
 
 export function About() {
   return (
@@ -14,12 +15,7 @@ export function About() {
       }}
     >
       <Container maxWidth="md">
-        <Typography
-          variant="h2"
-          sx={{ mb: 3, color: draculaColors.purple, borderBottom: `2px solid ${draculaColors.purple}`, pb: 1 }}
-        >
-          About Me
-        </Typography>
+        <SectionHeading mb={3}>About Me</SectionHeading>
         <Paper
           sx={{
             p: 3,

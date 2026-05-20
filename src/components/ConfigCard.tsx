@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import {
   Card,
   CardContent,
@@ -10,8 +10,9 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import SyntaxHighlighter from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
+const SyntaxHighlighter = lazy(() => import('react-syntax-highlighter'));
 import { draculaColors } from '../theme/dracula';
 import type { Config } from '../data/configs';
 
@@ -31,6 +32,7 @@ const languageMap: Record<string, string> = {
 
 export function ConfigCard({ config }: ConfigCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const lang = languageMap[config.language] || 'plaintext';
 
   return (
@@ -58,27 +60,25 @@ export function ConfigCard({ config }: ConfigCardProps) {
             border: `1px solid ${draculaColors.comment}`,
           }}
         >
-          <img
-            src={config.screenshot}
-            alt={config.name}
-            style={{
-              display: 'block',
-              width: '100%',
-              height: 'auto',
-              objectFit: 'contain',
-            }}
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-              const parent = (e.target as HTMLImageElement).parentElement;
-              if (parent) {
-                parent.style.display = 'flex';
-                parent.style.alignItems = 'center';
-                parent.style.justifyContent = 'center';
-                parent.style.minHeight = '120px';
-                parent.innerHTML = `<span style="color: ${draculaColors.comment}; font-size: 0.75rem;">Screenshot unavailable</span>`;
-              }
-            }}
-          />
+          {imgError ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 120 }}>
+              <Typography variant="caption" sx={{ color: draculaColors.comment }}>
+                Screenshot unavailable
+              </Typography>
+            </Box>
+          ) : (
+            <img
+              src={config.screenshot}
+              alt={config.name}
+              style={{
+                display: 'block',
+                width: '100%',
+                height: 'auto',
+                objectFit: 'contain',
+              }}
+              onError={() => setImgError(true)}
+            />
+          )}
         </Box>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Box
@@ -93,28 +93,30 @@ export function ConfigCard({ config }: ConfigCardProps) {
                 background: `${draculaColors.background} !important`,
               },
               '& code': {
-                fontFamily: "'JetBrains Mono', monospace !important",
+                fontFamily: "'JetBrainsMono Nerd Font', 'JetBrains Mono', monospace !important",
                 fontSize: '0.8rem !important',
                 lineHeight: '1.5 !important',
               },
             }}
           >
-            <SyntaxHighlighter
-              language={lang}
-              style={dracula}
-              customStyle={{
-                margin: 0,
-                borderRadius: 0,
-              }}
-              wrapLines
-              wrapLongLines
-            >
-              {config.code}
-            </SyntaxHighlighter>
+            <Suspense fallback={null}>
+              <SyntaxHighlighter
+                language={lang}
+                style={dracula}
+                customStyle={{
+                  margin: 0,
+                  borderRadius: 0,
+                }}
+                wrapLines
+                wrapLongLines
+              >
+                {config.code}
+              </SyntaxHighlighter>
+            </Suspense>
           </Box>
         </Collapse>
       </CardContent>
-      <CardActions sx={{ justifyContent: 'space-between' }}>
+      <CardActions sx={{ justifyContent: config.sourceUrl ? 'space-between' : 'flex-start' }}>
         <Button
           size="small"
           onClick={() => setExpanded(!expanded)}
@@ -128,16 +130,18 @@ export function ConfigCard({ config }: ConfigCardProps) {
             }}
           />
         </Button>
-        <Button
-          size="small"
-          href={config.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          endIcon={<OpenInNewIcon />}
-          sx={{ color: draculaColors.cyan }}
-        >
-          Full Config
-        </Button>
+        {config.sourceUrl && (
+          <Button
+            size="small"
+            href={config.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            endIcon={<OpenInNewIcon />}
+            sx={{ color: draculaColors.cyan }}
+          >
+            Full Config
+          </Button>
+        )}
       </CardActions>
     </Card>
   );

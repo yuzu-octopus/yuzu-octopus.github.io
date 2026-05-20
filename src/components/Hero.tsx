@@ -1,6 +1,7 @@
 import { Avatar, Typography, Button, Container } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { draculaColors } from '../theme/dracula';
+import { SITE } from '../data/site';
 
 export function Hero() {
   return (
@@ -16,7 +17,7 @@ export function Hero() {
     >
       <Container maxWidth="md" sx={{ textAlign: 'center' }}>
         <Avatar
-          src="https://avatars.githubusercontent.com/u/275212760?v=4"
+          src={SITE.avatarUrl}
           sx={{
             width: 150,
             height: 150,
@@ -37,13 +38,13 @@ export function Hero() {
         <Button
           variant="contained"
           startIcon={<GitHubIcon />}
-          href="https://github.com/yuzu-octopus"
+          href={SITE.githubUrl}
           target="_blank"
           rel="noopener noreferrer"
           sx={{
             backgroundColor: draculaColors.purple,
             color: draculaColors.foreground,
-            fontFamily: "'JetBrains Mono', monospace",
+            fontFamily: '"JetBrainsMono Nerd Font", "JetBrains Mono", monospace',
             '&:hover': {
               backgroundColor: draculaColors.pink,
             },
