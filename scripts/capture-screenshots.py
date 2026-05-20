@@ -333,7 +333,7 @@ Sleep 0.5s
 Type "cat {sf}"
 Enter
 Sleep 3s""", w=3840, h=2160, fs=40, shell="nu")
-# Crop fastfetch: remove command input line, left-align content
+# Crop fastfetch: remove command input line, add 10% padding around content
 src = OUT / "fastfetch.png"
 if src.exists():
     from PIL import Image
@@ -355,25 +355,24 @@ if src.exists():
                 if y > bottom: bottom = y
                 if x < left: left = x
                 if x > right: right = x
-    pad = 8
-    top = max(0, top - pad)
-    bottom = min(h, bottom + pad)
-    left = max(0, left - pad)
-    right = min(w, right + pad)
-    cropped = img.crop((left, top, right, bottom))
-    cw, ch = cropped.size
-    # Add padding on right side to match target ratio (left-aligned)
-    target_ratio = 3683 / 2016
-    current_ratio = cw / ch
-    if current_ratio < target_ratio:
-        new_w = round(ch * target_ratio)
-        new_img = Image.new("RGB", (new_w, ch), bg)
-        new_img.paste(cropped, (0, 0))
-    else:
-        new_img = cropped
-    resized = new_img.resize((3683, 2016), Image.LANCZOS)
-    resized.save(src)
-    print(f"  fastfetch: content {cw}x{ch} → 3683x2016")
+    # Crop to content
+    cw = right - left + 1
+    ch = bottom - top + 1
+    cropped = img.crop((left, top, right + 1, bottom + 1))
+    # Scale content to fill 80% of frame (10% padding on each side)
+    target_w = round(3683 * 0.80)
+    target_h = round(2016 * 0.80)
+    scale = min(target_w / cw, target_h / ch)
+    scaled_w = round(cw * scale)
+    scaled_h = round(ch * scale)
+    scaled = cropped.resize((scaled_w, scaled_h), Image.LANCZOS)
+    # Center on target canvas
+    new_img = Image.new("RGB", (3683, 2016), bg)
+    paste_x = (3683 - scaled_w) // 2
+    paste_y = (2016 - scaled_h) // 2
+    new_img.paste(scaled, (paste_x, paste_y))
+    new_img.save(src)
+    print(f"  fastfetch: content {cw}x{ch} → 3683x2016 (scaled {scale:.3f}x, 10% padding)")
 
 # ============================================================
 # 2. starship — capture prompt, single line with padding (4K)
@@ -441,16 +440,20 @@ if src.exists():
     else:
         cropped = img
     cw, ch = cropped.size
-    # Scale to fit width, center vertically
-    scale = 3683 / cw
-    scaled_w = 3683
+    # Scale content to fill 80% of frame (10% padding on each side)
+    target_w = round(3683 * 0.80)
+    target_h = round(2016 * 0.80)
+    scale = min(target_w / cw, target_h / ch)
+    scaled_w = round(cw * scale)
     scaled_h = round(ch * scale)
     scaled = cropped.resize((scaled_w, scaled_h), Image.LANCZOS)
+    # Center on target canvas
     new_img = Image.new("RGB", (3683, 2016), bg)
+    paste_x = (3683 - scaled_w) // 2
     paste_y = (2016 - scaled_h) // 2
-    new_img.paste(scaled, (0, paste_y))
+    new_img.paste(scaled, (paste_x, paste_y))
     new_img.save(src)
-    print(f"  starship: content {cw}x{ch} → 3683x{scaled_h} (scaled {scale:.3f}x)")
+    print(f"  starship: content {cw}x{ch} → 3683x2016 (scaled {scale:.3f}x, 10% padding)")
 
 # ============================================================
 # 3. ghostty — boo animation, trimmed with gifsicle (4K)
