@@ -48,3 +48,12 @@ bun.lockb
 frames/
 .vhs-test-exec/
 vhs-out-test/
+
+# VHS frame captures
+.vhs-frames-*/
+
+# Screenshot backups
+*-backup.png
+
+# Docs build output (GitHub Pages publishes from ./docs)
+docs/
