@@ -473,17 +473,39 @@ Sleep 1s
 Type "opencode"
 Enter
 Sleep 5s""", w=3840, h=2160, fs=48, shell="zsh")
-# Adjust opencode: add small vertical padding to match other screenshots
+# Adjust opencode: auto-crop to content + scale with 10% padding (like fastfetch/starship)
 src = OUT / "opencode.png"
 if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Crop 40px from top and bottom, then resize back to fill frame
-    img = img.crop((0, 40, w, h - 40))
-    resized = img.resize((3683, 2016), Image.LANCZOS)
-    resized.save(src)
-    print(f"  opencode: adjusted vertical padding → 3683x2016")
+    arr = list(img.getdata())
+    bg = (30, 31, 41)
+    top, bottom, left, right = h, 0, w, 0
+    for y in range(h):
+        for x in range(0, w, 2):
+            idx = y * w + x
+            r, g, b = arr[idx][:3]
+            if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
+                if y < top: top = y
+                if y > bottom: bottom = y
+                if x < left: left = x
+                if x > right: right = x
+    cw = right - left + 1
+    ch = bottom - top + 1
+    cropped = img.crop((left, top, right + 1, bottom + 1))
+    target_w = round(3683 * 0.80)
+    target_h = round(2016 * 0.80)
+    scale = min(target_w / cw, target_h / ch)
+    scaled_w = round(cw * scale)
+    scaled_h = round(ch * scale)
+    scaled = cropped.resize((scaled_w, scaled_h), Image.LANCZOS)
+    new_img = Image.new("RGB", (3683, 2016), bg)
+    paste_x = (3683 - scaled_w) // 2
+    paste_y = (2016 - scaled_h) // 2
+    new_img.paste(scaled, (paste_x, paste_y))
+    new_img.save(src)
+    print(f"  opencode: content {cw}x{ch} → 3683x2016 (scaled {scale:.3f}x, 10% padding)")
 
 print("\nDone. Files in public/screenshots/:")
 for p in sorted(OUT.glob("*.png")) + sorted(OUT.glob("*.gif")):
