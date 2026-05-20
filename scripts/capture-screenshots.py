@@ -392,29 +392,54 @@ if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 127px (cat command output)
-    img = img.crop((0, 127, w, h))
+    # Skip top 115px (cat command output, prompt starts at row 120)
+    img = img.crop((0, 115, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
-    # Find all content bounds
-    top, bottom, left, right = h, 0, w, 0
+    # Find content rows with their widths
+    content_rows = []
     for y in range(h):
+        non_bg = 0
         for x in range(0, w, 2):
             idx = y * w + x
             r, g, b = arr[idx][:3]
             if abs(r - bg[0]) > 5 or abs(g - bg[1]) > 5 or abs(b - bg[2]) > 5:
-                if y < top: top = y
-                if y > bottom: bottom = y
-                if x < left: left = x
-                if x > right: right = x
-    # Add small padding
-    pad = 5
-    top = max(0, top - pad)
-    bottom = min(h - 1, bottom + pad)
-    left = max(0, left - pad)
-    right = min(w - 1, right + pad)
-    cropped = img.crop((left, top, right + 1, bottom + 1))
+                non_bg += 1
+        if non_bg > 100:  # Only rows with significant content
+            content_rows.append((y, non_bg))
+    # Find the main content block (consecutive rows with high content)
+    if content_rows:
+        # Find the block with highest average width
+        blocks = []
+        start = content_rows[0][0]
+        prev = content_rows[0][0]
+        widths = [content_rows[0][1]]
+        for i in range(1, len(content_rows)):
+            y, non_bg = content_rows[i]
+            if y - prev > 5:  # Gap of more than 5px
+                blocks.append((start, prev, sum(widths) // len(widths)))
+                start = y
+                widths = [non_bg]
+            else:
+                widths.append(non_bg)
+            prev = y
+        blocks.append((start, prev, sum(widths) // len(widths)))
+        # Use the block with highest average width
+        main_block = max(blocks, key=lambda b: b[2])
+        top, bottom, _ = main_block
+        # Find left/right bounds for this block
+        left, right = w, 0
+        for y in range(top, bottom + 1):
+            for x in range(0, w, 2):
+                idx = y * w + x
+                r, g, b = arr[idx][:3]
+                if abs(r - bg[0]) > 5 or abs(g - bg[1]) > 5 or abs(b - bg[2]) > 5:
+                    if x < left: left = x
+                    if x > right: right = x
+        cropped = img.crop((left, top, right + 1, bottom + 1))
+    else:
+        cropped = img
     cw, ch = cropped.size
     # Scale to fit width, center vertically
     scale = 3683 / cw
