@@ -385,79 +385,47 @@ Enter
 Sleep 0.5s
 Type "cat {sf}"
 Enter
-Sleep 3s""", w=3840, h=2160, fs=60, shell="nu")
-# Crop starship: remove command input, tight crop to prompt block, add padding
+Sleep 3s""", w=3840, h=2160, fs=90, shell="nu")
+# Crop starship: remove command input, capture full prompt, scale to fit width
 src = OUT / "starship.png"
 if src.exists():
     from PIL import Image
     img = Image.open(src)
     w, h = img.size
-    # Skip top 127px (cat command output, prompt starts at row 132)
+    # Skip top 127px (cat command output)
     img = img.crop((0, 127, w, h))
     w, h = img.size
     arr = list(img.getdata())
     bg = (30, 31, 41)
-    # Find content rows and identify blocks
-    content_rows = []
+    # Find all content bounds
+    top, bottom, left, right = h, 0, w, 0
     for y in range(h):
-        non_bg = 0
         for x in range(0, w, 2):
             idx = y * w + x
             r, g, b = arr[idx][:3]
-            if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
-                non_bg += 1
-        if non_bg > 10:
-            content_rows.append((y, non_bg))
-    # Find blocks by width drops
-    blocks = []
-    if content_rows:
-        start = content_rows[0][0]
-        prev = content_rows[0][0]
-        max_w = content_rows[0][1]
-        for i in range(1, len(content_rows)):
-            y, non_bg = content_rows[i]
-            if non_bg < 200 and max_w > 500:
-                blocks.append((start, prev, max_w))
-                start = y
-                max_w = non_bg
-            else:
-                max_w = max(max_w, non_bg)
-            prev = y
-        blocks.append((start, prev, max_w))
-    # Use the widest block (main prompt)
-    if blocks:
-        main_block = max(blocks, key=lambda b: b[2])
-        top, bottom, _ = main_block
-        # Add vertical padding to include anti-aliased edges
-        v_pad = max(10, (bottom - top) // 10)
-        top = max(0, top - v_pad)
-        bottom = min(h - 1, bottom + v_pad)
-        # Find left/right bounds
-        left, right = w, 0
-        for y in range(top, bottom + 1):
-            for x in range(0, w, 2):
-                idx = y * w + x
-                r, g, b = arr[idx][:3]
-                if abs(r - bg[0]) > 8 or abs(g - bg[1]) > 8 or abs(b - bg[2]) > 8:
-                    if x < left: left = x
-                    if x > right: right = x
-        cropped = img.crop((left, top, right + 1, bottom + 1))
-    else:
-        cropped = img
+            if abs(r - bg[0]) > 5 or abs(g - bg[1]) > 5 or abs(b - bg[2]) > 5:
+                if y < top: top = y
+                if y > bottom: bottom = y
+                if x < left: left = x
+                if x > right: right = x
+    # Add small padding
+    pad = 5
+    top = max(0, top - pad)
+    bottom = min(h - 1, bottom + pad)
+    left = max(0, left - pad)
+    right = min(w - 1, right + pad)
+    cropped = img.crop((left, top, right + 1, bottom + 1))
     cw, ch = cropped.size
-    # Scale content to fill ~40% of frame height
-    target_height = 800
-    scale = target_height / ch
-    scaled_w = round(cw * scale)
+    # Scale to fit width, center vertically
+    scale = 3683 / cw
+    scaled_w = 3683
     scaled_h = round(ch * scale)
     scaled = cropped.resize((scaled_w, scaled_h), Image.LANCZOS)
-    # Center on target canvas
     new_img = Image.new("RGB", (3683, 2016), bg)
-    paste_x = (3683 - scaled_w) // 2
     paste_y = (2016 - scaled_h) // 2
-    new_img.paste(scaled, (paste_x, paste_y))
+    new_img.paste(scaled, (0, paste_y))
     new_img.save(src)
-    print(f"  starship: content {cw}x{ch} → 3683x2016 (scaled {scale:.3f}x)")
+    print(f"  starship: content {cw}x{ch} → 3683x{scaled_h} (scaled {scale:.3f}x)")
 
 # ============================================================
 # 3. ghostty — boo animation, trimmed with gifsicle (4K)
