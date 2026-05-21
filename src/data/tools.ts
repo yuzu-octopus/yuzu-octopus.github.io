@@ -63,4 +63,11 @@ export const tools: Tool[] = [
     description: 'Fast Python package installer',
     url: 'https://github.com/astral-sh/uv',
   },
+  {
+    id: 'nchat',
+    name: 'nchat',
+    category: 'Messaging',
+    description: 'Terminal-based WhatsApp client',
+    url: 'https://github.com/d99kris/nchat',
+  },
 ];
