@@ -31,6 +31,10 @@ Thumbs.db
 # Internal / dev files
 .superpowers/
 .opencode/
+AGENTS.md
+
+# Agent-related screenshots (don't advertise coding tools in public repo)
+public/screenshots/opencode.png
 
 # Playwright MCP test artifacts
 .playwright-mcp/
