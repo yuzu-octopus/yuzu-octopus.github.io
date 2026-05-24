@@ -17,7 +17,6 @@ dist-ssr
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
@@ -28,13 +27,11 @@ dist-ssr
 .DS_Store
 Thumbs.db
 
-# Internal / dev files
-.superpowers/
+# Agent / dev tooling
 .opencode/
-AGENTS.md
-
-# Playwright MCP test artifacts
+.superpowers/
 .playwright-mcp/
+AGENTS.md
 page-verify.md
 
 # Bun
@@ -55,6 +52,9 @@ vhs-out-test/
 
 # Screenshot backups
 *-backup.png
+
+# TypeScript project references
+*.tsbuildinfo
 
 # Docs build output (GitHub Pages publishes from ./docs)
 docs/
