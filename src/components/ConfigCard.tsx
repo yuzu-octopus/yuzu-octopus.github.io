@@ -10,9 +10,12 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { draculaSyntaxTheme } from '../theme/draculaSyntax';
+import { useConfigCode } from '../hooks/useConfigCode';
 
-const SyntaxHighlighter = lazy(() => import('react-syntax-highlighter'));
+const SyntaxHighlighter = lazy(() =>
+  import('react-syntax-highlighter').then((m) => ({ default: m.Prism })),
+);
 import { draculaColors } from '../theme/dracula';
 import type { Config } from '../data/configs';
 
@@ -34,6 +37,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [imgError, setImgError] = useState(false);
   const lang = languageMap[config.language] || 'plaintext';
+  const { code: fetchedCode, loading, error } = useConfigCode(config.rawUrl, expanded);
 
   return (
     <Card
@@ -100,18 +104,28 @@ export function ConfigCard({ config }: ConfigCardProps) {
             }}
           >
             <Suspense fallback={null}>
-              <SyntaxHighlighter
-                language={lang}
-                style={dracula}
-                customStyle={{
-                  margin: 0,
-                  borderRadius: 0,
-                }}
-                wrapLines
-                wrapLongLines
-              >
-                {config.code}
-              </SyntaxHighlighter>
+              {loading ? (
+                <Box sx={{ p: 2, color: draculaColors.comment, fontFamily: "'JetBrainsMono Nerd Font', monospace", fontSize: '0.8rem' }}>
+                  Loading source...
+                </Box>
+              ) : error ? (
+                <Box sx={{ p: 2, color: draculaColors.red, fontFamily: "'JetBrainsMono Nerd Font', monospace", fontSize: '0.8rem' }}>
+                  Failed to load source: {error}
+                </Box>
+              ) : fetchedCode ? (
+                <SyntaxHighlighter
+                  language={lang}
+                  style={draculaSyntaxTheme}
+                  customStyle={{
+                    margin: 0,
+                    borderRadius: 0,
+                  }}
+                  wrapLines
+                  wrapLongLines
+                >
+                  {fetchedCode}
+                </SyntaxHighlighter>
+              ) : null}
             </Suspense>
           </Box>
         </Collapse>
