@@ -1,1 +1,0 @@
-import{i as e,s as t,z as n}from"./index-jyi5oVvl.js";var r=n();function i({children:n,mb:i=4}){return(0,r.jsx)(t,{variant:`h2`,sx:{mb:i,color:e.purple,borderBottom:`2px solid ${e.purple}`,pb:1},children:n})}export{i as t};

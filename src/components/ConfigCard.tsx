@@ -99,7 +99,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
               '& code': {
                 fontFamily: "'JetBrainsMono Nerd Font', 'JetBrains Mono', monospace !important",
                 fontSize: '0.8rem !important',
-                lineHeight: '1.2 !important',
+                lineHeight: '0.9 !important',
               },
             }}
           >
