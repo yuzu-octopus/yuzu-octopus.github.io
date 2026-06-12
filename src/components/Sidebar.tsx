@@ -19,6 +19,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import CodeIcon from '@mui/icons-material/Code';
 import DesktopMacIcon from '@mui/icons-material/DesktopMac';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { draculaColors } from '../theme/dracula';
 import { SITE } from '../data/site';
@@ -26,6 +27,7 @@ import { SITE } from '../data/site';
 const navItems = [
   { text: 'Home', icon: <HomeIcon />, href: '#hero' },
   { text: 'About', icon: <PersonIcon />, href: '#about' },
+  { text: 'Projects', icon: <LibraryBooksIcon />, href: '#projects' },
   { text: 'Configs', icon: <CodeIcon />, href: '#configs' },
   { text: 'Workspace', icon: <DesktopMacIcon />, href: '#workspace' },
 ];
