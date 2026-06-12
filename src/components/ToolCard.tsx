@@ -40,20 +40,7 @@ export function ToolCard({ tool }: ToolCardProps) {
         <Typography variant="body2" sx={{ color: draculaColors.comment }}>
           {tool.description}
         </Typography>
-        <Box
-          sx={{
-            mt: 1,
-            display: 'inline-block',
-            px: 1,
-            py: 0.5,
-            backgroundColor: draculaColors.currentLine,
-            borderRadius: 1,
-            fontSize: '0.7rem',
-            color: draculaColors.purple,
-          }}
-        >
-          {tool.category}
-        </Box>
+
       </CardContent>
     </Card>
   );

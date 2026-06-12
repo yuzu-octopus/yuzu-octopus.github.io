@@ -18,6 +18,6 @@ export const tools: Tool[] = [
   { id: 'javascript', name: 'JavaScript / TypeScript', category: 'Languages', description: 'Web development and tooling', url: 'https://typescriptlang.org' },
   { id: 'bun', name: 'Bun', category: 'Runtime', description: 'Fast JavaScript runtime and package manager', url: 'https://bun.sh' },
   { id: 'uv', name: 'uv', category: 'Runtime', description: 'Fast Python package installer', url: 'https://github.com/astral-sh/uv' },
-  { id: 'docker', name: 'Docker', category: 'Runtime', description: 'Containerized development environments', url: 'https://docker.com' },
+  { id: 'orbstack', name: 'OrbStack', category: 'Runtime', description: 'Fast, light Docker containers & Linux machines', url: 'https://orbstack.dev' },
   { id: 'nchat', name: 'nchat', category: 'Messaging', description: 'Terminal-based WhatsApp client', url: 'https://github.com/d99kris/nchat' },
 ];
