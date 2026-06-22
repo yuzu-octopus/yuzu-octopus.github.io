@@ -11,10 +11,11 @@ const categorized = tools.reduce<Record<ToolCategory, typeof tools>>((acc, tool)
 
 export function Workspace() {
   return (
-    <section
+    <Box
+      component="section"
       id="workspace"
-      style={{
-        minHeight: '100vh',
+      sx={{
+        minHeight: { xs: 'auto', md: '100vh' },
         padding: '4rem 0',
         backgroundColor: draculaColors.currentLine,
       }}
@@ -42,6 +43,6 @@ export function Workspace() {
           </Typography>
         )}
       </Container>
-    </section>
+    </Box>
   );
 }

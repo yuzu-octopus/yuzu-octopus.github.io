@@ -1,4 +1,4 @@
-import { Container, Typography, Grid } from '@mui/material';
+import { Container, Typography, Grid, Box } from '@mui/material';
 import { draculaColors } from '../theme/dracula';
 import { configs } from '../data/configs';
 import { ConfigCard } from './ConfigCard';
@@ -6,10 +6,11 @@ import { SectionHeading } from './SectionHeading';
 
 export function ConfigsGallery() {
   return (
-    <section
+    <Box
+      component="section"
       id="configs"
-      style={{
-        minHeight: '100vh',
+      sx={{
+        minHeight: { xs: 'auto', md: '100vh' },
         padding: '4rem 0',
         backgroundColor: draculaColors.background,
       }}
@@ -30,6 +31,6 @@ export function ConfigsGallery() {
           </Typography>
         )}
       </Container>
-    </section>
+    </Box>
   );
 }

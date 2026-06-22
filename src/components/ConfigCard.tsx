@@ -30,7 +30,7 @@ const languageMap: Record<string, string> = {
   ini: 'ini',
   yaml: 'yaml',
   sh: 'bash',
-  nu: 'bash',
+  nu: 'plaintext',
 };
 
 export function ConfigCard({ config }: ConfigCardProps) {
@@ -89,7 +89,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
             sx={{
               borderRadius: 1,
               overflow: 'auto',
-              maxHeight: 400,
+              maxHeight: { xs: 250, sm: 400 },
               border: `1px solid ${draculaColors.comment}`,
               '& pre': {
                 margin: 0,

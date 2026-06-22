@@ -1,32 +1,34 @@
-import { Avatar, Typography, Button, Container } from '@mui/material';
+import { Avatar, Typography, Button, Container, Box } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { draculaColors } from '../theme/dracula';
 import { SITE } from '../data/site';
 
 export function Hero() {
   return (
-    <section
+    <Box
+      component="section"
       id="hero"
-      style={{
-        minHeight: '100vh',
+      sx={{
+        minHeight: { xs: 'auto', md: '100vh' },
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: draculaColors.background,
+        padding: { xs: '4rem 0', md: 0 },
       }}
     >
       <Container maxWidth="md" sx={{ textAlign: 'center' }}>
         <Avatar
           src={SITE.avatarUrl}
           sx={{
-            width: 150,
-            height: 150,
+            width: { xs: 100, sm: 150 },
+            height: { xs: 100, sm: 150 },
             margin: '0 auto',
             mb: 3,
             border: `4px solid ${draculaColors.purple}`,
           }}
         />
-        <Typography variant="h1" sx={{ fontSize: '3rem', mb: 1, color: draculaColors.purple }}>
+        <Typography variant="h1" sx={{ fontSize: { xs: '2rem', sm: '3rem' }, mb: 1, color: draculaColors.purple }}>
           Hi, I'm yuzu
         </Typography>
         <Typography
@@ -53,6 +55,6 @@ export function Hero() {
           View GitHub
         </Button>
       </Container>
-    </section>
+    </Box>
   );
 }

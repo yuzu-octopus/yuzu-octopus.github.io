@@ -6,5 +6,14 @@ export default defineConfig({
   base: '/',
   build: {
     outDir: 'docs',
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes('@mui/icons-material')) return 'mui-icons';
+          if (id.includes('@mui/material') || id.includes('@mui/system')) return 'mui-core';
+          if (id.includes('@emotion')) return 'mui-core';
+        },
+      },
+    },
   },
 })

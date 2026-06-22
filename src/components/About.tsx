@@ -1,13 +1,14 @@
-import { Container, Typography, Paper } from '@mui/material';
+import { Container, Typography, Paper, Box } from '@mui/material';
 import { draculaColors } from '../theme/dracula';
 import { SectionHeading } from './SectionHeading';
 
 export function About() {
   return (
-    <section
+    <Box
+      component="section"
       id="about"
-      style={{
-        minHeight: '100vh',
+      sx={{
+        minHeight: { xs: 'auto', md: '100vh' },
         display: 'flex',
         alignItems: 'center',
         backgroundColor: draculaColors.currentLine,
@@ -36,6 +37,6 @@ export function About() {
           </Typography>
         </Paper>
       </Container>
-    </section>
+    </Box>
   );
 }

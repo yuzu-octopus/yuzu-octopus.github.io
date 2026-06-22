@@ -6,10 +6,11 @@ import { projects } from '../data/projects';
 
 export function Projects() {
   return (
-    <section
+    <Box
+      component="section"
       id="projects"
-      style={{
-        minHeight: '100vh',
+      sx={{
+        minHeight: { xs: 'auto', md: '100vh' },
         padding: '4rem 0',
         backgroundColor: draculaColors.background,
       }}
@@ -104,6 +105,6 @@ export function Projects() {
           </Typography>
         )}
       </Container>
-    </section>
+    </Box>
   );
 }
