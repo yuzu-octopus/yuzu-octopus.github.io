@@ -11,7 +11,8 @@ export function ToolCard({ tool }: ToolCardProps) {
   return (
     <Card
       sx={{
-        backgroundColor: draculaColors.background,
+        backgroundColor: draculaColors.currentLine,
+        borderRadius: '8px',
         border: `1px solid ${draculaColors.comment}`,
         height: '100%',
         transition: 'border-color 0.2s',

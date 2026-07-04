@@ -22,7 +22,8 @@ export function Projects() {
             <Card
               key={project.id}
               sx={{
-                backgroundColor: draculaColors.background,
+                backgroundColor: draculaColors.currentLine,
+                borderRadius: '8px',
                 border: `1px solid ${draculaColors.comment}`,
                 mb: 3,
               }}

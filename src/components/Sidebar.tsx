@@ -57,6 +57,7 @@ function DrawerContent({ onNavClick }: { onNavClick?: () => void }) {
               component="a"
               href={item.href}
               onClick={onNavClick}
+              sx={{ borderRadius: '8px', mx: 1 }}
             >
               <ListItemIcon sx={{ color: draculaColors.foreground }}>
                 {item.icon}

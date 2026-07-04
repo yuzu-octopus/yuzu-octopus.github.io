@@ -42,7 +42,8 @@ export function ConfigCard({ config }: ConfigCardProps) {
   return (
     <Card
       sx={{
-        backgroundColor: draculaColors.background,
+        backgroundColor: draculaColors.currentLine,
+        borderRadius: '8px',
         border: `1px solid ${draculaColors.comment}`,
         color: draculaColors.foreground,
       }}

@@ -46,9 +46,12 @@ export function Hero() {
           sx={{
             backgroundColor: draculaColors.purple,
             color: draculaColors.foreground,
+            border: '1px solid transparent',
             fontFamily: '"JetBrainsMono Nerd Font", "JetBrains Mono", monospace',
             '&:hover': {
-              backgroundColor: draculaColors.pink,
+              backgroundColor: 'transparent',
+              color: draculaColors.purple,
+              border: `1px solid ${draculaColors.purple}`,
             },
           }}
         >

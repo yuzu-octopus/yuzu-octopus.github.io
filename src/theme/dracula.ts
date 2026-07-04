@@ -4,7 +4,7 @@ export const draculaColors = {
   background: '#282a36',
   currentLine: '#44475a',
   foreground: '#f8f8f2',
-  comment: '#6272a4',
+  comment: '#8ca0d7',
   cyan: '#8be9fd',
   green: '#50fa7b',
   orange: '#ffb86c',
