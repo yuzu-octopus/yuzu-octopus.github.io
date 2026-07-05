@@ -1,5 +1,5 @@
 import { Avatar, Typography, Button, Container, Box } from '@mui/material';
-import { Icon } from './Icon';
+import { GitHubIcon } from './GitHubIcon';
 import { SITE } from '../data/site';
 
 export function Hero() {
@@ -38,7 +38,7 @@ export function Hero() {
         </Typography>
         <Button
           variant="contained"
-          startIcon={<Icon name="github" />}
+          startIcon={<GitHubIcon />}
           href={SITE.githubUrl}
           target="_blank"
           rel="noopener noreferrer"

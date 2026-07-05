@@ -42,3 +42,32 @@ code {
   transform: translateY(-2px);
   border-color: var(--purple);
 }
+
+.theme-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1200;
+  background: var(--panel);
+  border: 1px solid var(--muted);
+  color: var(--fg);
+  padding: 10px 12px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 250ms cubic-bezier(0.4, 0, 0.2, 1), border-color 250ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:hover {
+  border-color: var(--purple);
+  color: var(--purple);
+  transform: translateY(-1px);
+}
+
+.theme-toggle .material-symbols-outlined {
+  font-size: 24px;
+}

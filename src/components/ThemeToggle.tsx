@@ -1,27 +1,28 @@
-import { IconButton } from '@mui/material';
-import { Icon } from './Icon';
 import { useTheme } from '../hooks/useTheme';
 
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <IconButton
+    <button
       onClick={toggleTheme}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-      sx={{
-        position: 'fixed',
-        top: 16,
-        right: 16,
-        zIndex: 1200,
-        backgroundColor: 'var(--panel)',
-        border: '1px solid var(--muted)',
-        '&:hover': {
-          backgroundColor: 'var(--purple)',
-        },
-      }}
+      className="theme-toggle"
     >
-      {theme === 'dark' ? <Icon name="light_mode" /> : <Icon name="dark_mode" />}
-    </IconButton>
+      <span
+        className="material-symbols-outlined"
+        style={{ display: theme === 'dark' ? 'block' : 'none' }}
+        aria-hidden="true"
+      >
+        dark_mode
+      </span>
+      <span
+        className="material-symbols-outlined"
+        style={{ display: theme === 'light' ? 'block' : 'none' }}
+        aria-hidden="true"
+      >
+        light_mode
+      </span>
+    </button>
   );
 }

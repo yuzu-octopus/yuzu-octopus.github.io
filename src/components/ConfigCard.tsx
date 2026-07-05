@@ -64,36 +64,38 @@ export function ConfigCard({ config }: ConfigCardProps) {
         <Typography variant="body2" sx={{ color: 'var(--muted)', mb: 2 }}>
           {config.description}
         </Typography>
-        <Box
-          sx={{
-            backgroundColor: 'var(--panel)',
-            borderRadius: 1,
-            p: 0,
-            mb: 2,
-            overflow: 'hidden',
-            border: '1px solid var(--muted)',
-          }}
-        >
-          {config.screenshot && !imgError ? (
-            <img
-              src={config.screenshot}
-              alt={config.name}
-              style={{
-                display: 'block',
-                width: '100%',
-                height: 'auto',
-                objectFit: 'contain',
-              }}
-              onError={() => setImgError(true)}
-            />
-          ) : !config.screenshot ? null : (
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 120 }}>
-              <Typography variant="caption" sx={{ color: 'var(--muted)' }}>
-                Screenshot unavailable
-              </Typography>
-            </Box>
-          )}
-        </Box>
+        {config.screenshot && (
+          <Box
+            sx={{
+              backgroundColor: 'var(--panel)',
+              borderRadius: 1,
+              p: 0,
+              mb: 2,
+              overflow: 'hidden',
+              border: '1px solid var(--muted)',
+            }}
+          >
+            {!imgError ? (
+              <img
+                src={config.screenshot}
+                alt={config.name}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  height: 'auto',
+                  objectFit: 'contain',
+                }}
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 120 }}>
+                <Typography variant="caption" sx={{ color: 'var(--muted)' }}>
+                  Screenshot unavailable
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        )}
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Box
             sx={{

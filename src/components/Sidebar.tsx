@@ -15,6 +15,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { Icon } from './Icon';
+import { GitHubIcon } from './GitHubIcon';
 import { SITE } from '../data/site';
 import { useScrollSpy } from '../hooks/useScrollSpy';
 
@@ -81,7 +82,7 @@ function DrawerContent({ onNavClick, activeSection }: { onNavClick?: () => void;
             rel="noopener noreferrer"
           >
             <ListItemIcon sx={{ color: 'var(--fg)' }}>
-              <Icon name="github" />
+              <GitHubIcon />
             </ListItemIcon>
             <ListItemText primary="GitHub" />
           </ListItemButton>
