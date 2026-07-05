@@ -1,6 +1,5 @@
 import { Card, CardContent, Typography, Box, IconButton } from '@mui/material';
 import { Icon } from './Icon';
-import { draculaColors } from '../theme/dracula';
 import type { Tool } from '../data/tools';
 
 interface ToolCardProps {
@@ -12,15 +11,15 @@ export function ToolCard({ tool }: ToolCardProps) {
     <Card
       className="hover-lift"
       sx={{
-        backgroundColor: draculaColors.currentLine,
+        backgroundColor: 'var(--panel)',
         borderRadius: '8px',
-        border: `1px solid ${draculaColors.comment}`,
+        border: '1px solid var(--muted)',
         height: '100%',
       }}
     >
       <CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <Typography variant="h6" sx={{ color: draculaColors.cyan, mb: 1 }}>
+          <Typography variant="h6" sx={{ color: 'var(--cyan)', mb: 1 }}>
             {tool.name}
           </Typography>
           {tool.url && (
@@ -29,13 +28,13 @@ export function ToolCard({ tool }: ToolCardProps) {
               href={tool.url}
               target="_blank"
               rel="noopener noreferrer"
-              sx={{ color: draculaColors.comment }}
+              sx={{ color: 'var(--muted)' }}
             >
               <Icon name="open_in_new" size={20} />
             </IconButton>
           )}
         </Box>
-        <Typography variant="body2" sx={{ color: draculaColors.comment }}>
+        <Typography variant="body2" sx={{ color: 'var(--muted)' }}>
           {tool.description}
         </Typography>
 

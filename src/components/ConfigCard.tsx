@@ -7,6 +7,7 @@ import {
   Button,
   Collapse,
   Box,
+  IconButton,
 } from '@mui/material';
 import { Icon } from './Icon';
 import { draculaSyntaxTheme } from '../theme/draculaSyntax';
@@ -15,7 +16,6 @@ import { useConfigCode } from '../hooks/useConfigCode';
 const SyntaxHighlighter = lazy(() =>
   import('react-syntax-highlighter').then((m) => ({ default: m.Prism })),
 );
-import { draculaColors } from '../theme/dracula';
 import type { Config } from '../data/configs';
 
 interface ConfigCardProps {
@@ -37,32 +37,41 @@ export function ConfigCard({ config }: ConfigCardProps) {
   const [imgError, setImgError] = useState(false);
   const lang = languageMap[config.language] || 'plaintext';
   const { code: fetchedCode, loading, error } = useConfigCode(config.rawUrl, expanded);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    if (fetchedCode) {
+      await navigator.clipboard.writeText(fetchedCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   return (
     <Card
       className="hover-lift"
       sx={{
-        backgroundColor: draculaColors.currentLine,
+        backgroundColor: 'var(--panel)',
         borderRadius: '8px',
-        border: `1px solid ${draculaColors.comment}`,
-        color: draculaColors.foreground,
+        border: '1px solid var(--muted)',
+        color: 'var(--fg)',
       }}
     >
       <CardContent>
-        <Typography variant="h6" sx={{ color: draculaColors.purple, mb: 1 }}>
+        <Typography variant="h6" sx={{ color: 'var(--purple)', mb: 1 }}>
           {config.name}
         </Typography>
-        <Typography variant="body2" sx={{ color: draculaColors.comment, mb: 2 }}>
+        <Typography variant="body2" sx={{ color: 'var(--muted)', mb: 2 }}>
           {config.description}
         </Typography>
         <Box
           sx={{
-            backgroundColor: draculaColors.currentLine,
+            backgroundColor: 'var(--panel)',
             borderRadius: 1,
             p: 0,
             mb: 2,
             overflow: 'hidden',
-            border: `1px solid ${draculaColors.comment}`,
+            border: '1px solid var(--muted)',
           }}
         >
           {config.screenshot && !imgError ? (
@@ -79,7 +88,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
             />
           ) : !config.screenshot ? null : (
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 120 }}>
-              <Typography variant="caption" sx={{ color: draculaColors.comment }}>
+              <Typography variant="caption" sx={{ color: 'var(--muted)' }}>
                 Screenshot unavailable
               </Typography>
             </Box>
@@ -88,14 +97,15 @@ export function ConfigCard({ config }: ConfigCardProps) {
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Box
             sx={{
+              position: 'relative',
               borderRadius: 1,
               overflow: 'auto',
               maxHeight: { xs: 250, sm: 400 },
-              border: `1px solid ${draculaColors.comment}`,
+              border: '1px solid var(--muted)',
               '& pre': {
                 margin: 0,
                 padding: '1rem !important',
-                background: `${draculaColors.background} !important`,
+                background: 'var(--bg) !important',
               },
               '& code': {
                 fontFamily: "'JetBrainsMono Nerd Font', 'JetBrains Mono', monospace !important",
@@ -104,13 +114,29 @@ export function ConfigCard({ config }: ConfigCardProps) {
               },
             }}
           >
+            {fetchedCode && (
+              <IconButton
+                onClick={handleCopy}
+                size="small"
+                sx={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  zIndex: 1,
+                  backgroundColor: 'var(--panel)',
+                  '&:hover': { backgroundColor: 'var(--purple)' },
+                }}
+              >
+                <Icon name={copied ? 'check' : 'content_copy'} size={16} />
+              </IconButton>
+            )}
             <Suspense fallback={null}>
               {loading ? (
-                <Box sx={{ p: 2, color: draculaColors.comment, fontFamily: "'JetBrainsMono Nerd Font', monospace", fontSize: '0.8rem' }}>
+                <Box sx={{ p: 2, color: 'var(--muted)', fontFamily: "'JetBrainsMono Nerd Font', monospace", fontSize: '0.8rem' }}>
                   Loading source...
                 </Box>
               ) : error ? (
-                <Box sx={{ p: 2, color: draculaColors.red, fontFamily: "'JetBrainsMono Nerd Font', monospace", fontSize: '0.8rem' }}>
+                <Box sx={{ p: 2, color: 'var(--red)', fontFamily: "'JetBrainsMono Nerd Font', monospace", fontSize: '0.8rem' }}>
                   Failed to load source: {error}
                 </Box>
               ) : fetchedCode ? (
@@ -135,7 +161,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
         <Button
           size="small"
           onClick={() => setExpanded(!expanded)}
-          sx={{ color: draculaColors.purple }}
+          sx={{ color: 'var(--purple)' }}
         >
           {expanded ? 'Hide Source' : 'View Source'}
           <Icon name="expand_more" size={20} />
@@ -147,7 +173,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             endIcon={<Icon name="open_in_new" size={18} />}
-            sx={{ color: draculaColors.cyan }}
+            sx={{ color: 'var(--cyan)' }}
           >
             Full Config
           </Button>

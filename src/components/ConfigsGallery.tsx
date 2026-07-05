@@ -1,5 +1,4 @@
 import { Container, Typography, Grid, Box } from '@mui/material';
-import { draculaColors } from '../theme/dracula';
 import { configs } from '../data/configs';
 import { ConfigCard } from './ConfigCard';
 import { SectionHeading } from './SectionHeading';
@@ -17,7 +16,7 @@ export function ConfigsGallery() {
       sx={{
         minHeight: { xs: 'auto', md: '100vh' },
         padding: '4rem 0',
-        backgroundColor: draculaColors.background,
+        backgroundColor: 'var(--bg)',
       }}
     >
       <Container maxWidth="lg">
@@ -31,7 +30,7 @@ export function ConfigsGallery() {
             ))}
           </Grid>
         ) : (
-          <Typography sx={{ color: draculaColors.comment, textAlign: 'center', py: 4 }}>
+          <Typography sx={{ color: 'var(--muted)', textAlign: 'center', py: 4 }}>
             No configurations to display yet.
           </Typography>
         )}

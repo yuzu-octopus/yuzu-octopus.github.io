@@ -1,5 +1,4 @@
 import { Container, Typography, Paper, Box } from '@mui/material';
-import { draculaColors } from '../theme/dracula';
 import { SectionHeading } from './SectionHeading';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 
@@ -16,7 +15,7 @@ export function About() {
         minHeight: { xs: 'auto', md: '100vh' },
         display: 'flex',
         alignItems: 'center',
-        backgroundColor: draculaColors.currentLine,
+        backgroundColor: 'var(--panel)',
         padding: '4rem 0',
       }}
     >
@@ -25,8 +24,8 @@ export function About() {
         <Paper
           sx={{
             p: 3,
-            backgroundColor: draculaColors.background,
-            border: `1px solid ${draculaColors.comment}`,
+            backgroundColor: 'var(--bg)',
+            border: '1px solid var(--muted)',
           }}
         >
           <Typography variant="body1" sx={{ mb: 2, lineHeight: 1.8 }}>

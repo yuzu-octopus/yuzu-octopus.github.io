@@ -15,7 +15,6 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { Icon } from './Icon';
-import { draculaColors } from '../theme/dracula';
 import { SITE } from '../data/site';
 import { useScrollSpy } from '../hooks/useScrollSpy';
 
@@ -39,14 +38,14 @@ function DrawerContent({ onNavClick, activeSection }: { onNavClick?: () => void;
           src={SITE.avatarUrl}
           sx={{ width: 80, height: 80, margin: '0 auto', mb: 1 }}
         />
-        <Typography variant="h6" sx={{ color: draculaColors.purple, fontWeight: 700 }}>
+        <Typography variant="h6" sx={{ color: 'var(--purple)', fontWeight: 700 }}>
           yuzu
         </Typography>
-        <Typography variant="caption" sx={{ color: draculaColors.comment }}>
+        <Typography variant="caption" sx={{ color: 'var(--muted)' }}>
           solo dev · ctf · configs
         </Typography>
       </Box>
-      <Divider sx={{ borderColor: draculaColors.comment }} />
+      <Divider sx={{ borderColor: 'var(--muted)' }} />
       <List sx={{ flex: 1 }}>
         {navItems.map((item) => {
           const isActive = item.href === `#${activeSection}`;
@@ -59,8 +58,8 @@ function DrawerContent({ onNavClick, activeSection }: { onNavClick?: () => void;
                 sx={{
                   borderRadius: '8px',
                   mx: 1,
-                  backgroundColor: isActive ? 'color-mix(in srgb, #bd93f9 20%, transparent)' : 'transparent',
-                  color: isActive ? '#bd93f9' : draculaColors.foreground,
+                  backgroundColor: isActive ? 'color-mix(in srgb, var(--purple) 20%, transparent)' : 'transparent',
+                  color: isActive ? 'var(--purple)' : 'var(--fg)',
                 }}
               >
                 <ListItemIcon sx={{ color: 'inherit' }}>
@@ -72,7 +71,7 @@ function DrawerContent({ onNavClick, activeSection }: { onNavClick?: () => void;
           );
         })}
       </List>
-      <Divider sx={{ borderColor: draculaColors.comment }} />
+      <Divider sx={{ borderColor: 'var(--muted)' }} />
       <List>
         <ListItem disablePadding>
           <ListItemButton
@@ -81,7 +80,7 @@ function DrawerContent({ onNavClick, activeSection }: { onNavClick?: () => void;
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ListItemIcon sx={{ color: draculaColors.foreground }}>
+            <ListItemIcon sx={{ color: 'var(--fg)' }}>
               <Icon name="github" />
             </ListItemIcon>
             <ListItemText primary="GitHub" />
@@ -89,18 +88,18 @@ function DrawerContent({ onNavClick, activeSection }: { onNavClick?: () => void;
         </ListItem>
       </List>
       <Box sx={{ p: 2 }}>
-        <Typography variant="caption" sx={{ color: draculaColors.comment, display: 'block' }}>
+        <Typography variant="caption" sx={{ color: 'var(--muted)', display: 'block' }}>
           © 2026 {SITE.githubUsername}
         </Typography>
-        <Typography variant="caption" sx={{ color: draculaColors.comment, display: 'block' }}>
+        <Typography variant="caption" sx={{ color: 'var(--muted)', display: 'block' }}>
           Powered by{' '}
-          <Link href="https://pages.github.com" target="_blank" rel="noopener" sx={{ color: draculaColors.purple }}>
+          <Link href="https://pages.github.com" target="_blank" rel="noopener" sx={{ color: 'var(--purple)' }}>
             GitHub Pages
           </Link>
         </Typography>
-        <Typography variant="caption" sx={{ color: draculaColors.comment, display: 'block' }}>
+        <Typography variant="caption" sx={{ color: 'var(--muted)', display: 'block' }}>
           Made with{' '}
-          <Link href="https://vite.dev" target="_blank" rel="noopener" sx={{ color: draculaColors.purple }}>
+          <Link href="https://vite.dev" target="_blank" rel="noopener" sx={{ color: 'var(--purple)' }}>
             Vite
           </Link>
         </Typography>
@@ -124,8 +123,8 @@ export function Sidebar() {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
-            backgroundColor: draculaColors.currentLine,
-            borderRight: `1px solid ${draculaColors.comment}`,
+            backgroundColor: 'var(--panel)',
+            borderRight: '1px solid var(--muted)',
           },
         }}
       >
@@ -144,11 +143,11 @@ export function Sidebar() {
           top: 12,
           left: 12,
           zIndex: 1200,
-          color: draculaColors.foreground,
-          backgroundColor: draculaColors.currentLine,
-          border: `1px solid ${draculaColors.comment}`,
+          color: 'var(--fg)',
+          backgroundColor: 'var(--panel)',
+          border: '1px solid var(--muted)',
           '&:hover': {
-            backgroundColor: draculaColors.comment,
+            backgroundColor: 'var(--muted)',
           },
         }}
       >
@@ -163,8 +162,8 @@ export function Sidebar() {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
-            backgroundColor: draculaColors.currentLine,
-            borderRight: `1px solid ${draculaColors.comment}`,
+            backgroundColor: 'var(--panel)',
+            borderRight: '1px solid var(--muted)',
           },
         }}
       >

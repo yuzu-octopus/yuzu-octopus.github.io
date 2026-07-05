@@ -1,6 +1,5 @@
 import { Avatar, Typography, Button, Container, Box } from '@mui/material';
 import { Icon } from './Icon';
-import { draculaColors } from '../theme/dracula';
 import { SITE } from '../data/site';
 
 export function Hero() {
@@ -13,7 +12,7 @@ export function Hero() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: draculaColors.background,
+        backgroundColor: 'var(--bg)',
         padding: { xs: '4rem 0', md: 0 },
       }}
     >
@@ -25,15 +24,15 @@ export function Hero() {
             height: { xs: 100, sm: 150 },
             margin: '0 auto',
             mb: 3,
-            border: `4px solid ${draculaColors.purple}`,
+            border: '4px solid var(--purple)',
           }}
         />
-        <Typography variant="h1" sx={{ fontSize: { xs: '2rem', sm: '3rem' }, mb: 1, color: draculaColors.purple }}>
+        <Typography variant="h1" sx={{ fontSize: { xs: '2rem', sm: '3rem' }, mb: 1, color: 'var(--purple)' }}>
           Hi, I'm yuzu
         </Typography>
         <Typography
           variant="h5"
-          sx={{ mb: 3, color: draculaColors.comment, fontWeight: 400 }}
+          sx={{ mb: 3, color: 'var(--muted)', fontWeight: 400 }}
         >
           Solo developer who loves CTFs and configuring everything.
         </Typography>
@@ -44,15 +43,15 @@ export function Hero() {
           target="_blank"
           rel="noopener noreferrer"
           sx={{
-            backgroundColor: draculaColors.purple,
-            color: draculaColors.foreground,
+            backgroundColor: 'var(--purple)',
+            color: 'var(--fg)',
             border: '1px solid transparent',
             fontFamily: '"JetBrainsMono Nerd Font", "JetBrains Mono", monospace',
             transition: 'transform 250ms cubic-bezier(0.4, 0, 0.2, 1), background-color 250ms cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': {
               backgroundColor: 'transparent',
-              color: draculaColors.purple,
-              border: `1px solid ${draculaColors.purple}`,
+              color: 'var(--purple)',
+              border: '1px solid var(--purple)',
             },
           }}
         >

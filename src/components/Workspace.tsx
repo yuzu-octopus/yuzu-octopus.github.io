@@ -1,5 +1,4 @@
 import { Box, Container, Typography, Grid } from '@mui/material';
-import { draculaColors } from '../theme/dracula';
 import { tools, type ToolCategory } from '../data/tools';
 import { ToolCard } from './ToolCard';
 import { SectionHeading } from './SectionHeading';
@@ -22,7 +21,7 @@ export function Workspace() {
       sx={{
         minHeight: { xs: 'auto', md: '100vh' },
         padding: '4rem 0',
-        backgroundColor: draculaColors.currentLine,
+        backgroundColor: 'var(--panel)',
       }}
     >
       <Container maxWidth="lg">
@@ -30,7 +29,7 @@ export function Workspace() {
         {Object.keys(categorized).length > 0 ? (
           Object.entries(categorized).map(([category, categoryTools]) => (
             <Box key={category} sx={{ mb: 4 }}>
-              <Typography variant="h6" sx={{ color: draculaColors.pink, mb: 1 }}>
+              <Typography variant="h6" sx={{ color: 'var(--pink)', mb: 1 }}>
                 {category}
               </Typography>
               <Grid container spacing={2}>
@@ -43,7 +42,7 @@ export function Workspace() {
             </Box>
           ))
         ) : (
-          <Typography sx={{ color: draculaColors.comment, textAlign: 'center', py: 4 }}>
+          <Typography sx={{ color: 'var(--muted)', textAlign: 'center', py: 4 }}>
             No tools configured yet.
           </Typography>
         )}
