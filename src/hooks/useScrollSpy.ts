@@ -4,29 +4,50 @@ export function useScrollSpy(ids: string[], offset = 120) {
   const [active, setActive] = useState(ids[0]);
 
   useEffect(() => {
-    const sections = ids
-      .map((id) => document.getElementById(id))
-      .filter(Boolean) as HTMLElement[];
+    let observer: MutationObserver | null = null;
+    let scrollHandler: (() => void) | null = null;
 
-    if (sections.length === 0) return;
+    function setupScrollSpy() {
+      const sections = ids
+        .map((id) => document.getElementById(id))
+        .filter(Boolean) as HTMLElement[];
 
-    function onScroll() {
-      const scrollY = window.scrollY + offset;
-      let current = sections[0];
-      for (const section of sections) {
-        if (section.offsetTop <= scrollY) {
-          current = section;
+      if (sections.length === 0) return false;
+
+      function onScroll() {
+        const scrollY = window.scrollY + offset;
+        let current = sections[0];
+        for (const section of sections) {
+          if (section.offsetTop <= scrollY) {
+            current = section;
+          }
+        }
+        if (current) {
+          setActive(current.id);
         }
       }
-      if (current) {
-        setActive(current.id);
-      }
+
+      scrollHandler = onScroll;
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      return true;
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    // Try to setup immediately
+    if (!setupScrollSpy()) {
+      // If sections not found, watch for DOM changes
+      observer = new MutationObserver(() => {
+        if (setupScrollSpy() && observer) {
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
 
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      if (observer) observer.disconnect();
+      if (scrollHandler) window.removeEventListener('scroll', scrollHandler);
+    };
   }, [ids, offset]);
 
   return active;
