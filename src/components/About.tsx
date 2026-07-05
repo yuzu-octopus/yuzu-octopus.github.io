@@ -1,12 +1,17 @@
 import { Container, Typography, Paper, Box } from '@mui/material';
 import { draculaColors } from '../theme/dracula';
 import { SectionHeading } from './SectionHeading';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 export function About() {
+  const sectionRef = useScrollReveal<HTMLElement>();
+
   return (
     <Box
       component="section"
       id="about"
+      ref={sectionRef}
+      className="reveal"
       sx={{
         minHeight: { xs: 'auto', md: '100vh' },
         display: 'flex',

@@ -41,6 +41,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
 
   return (
     <Card
+      className="hover-lift"
       sx={{
         backgroundColor: draculaColors.currentLine,
         borderRadius: '8px',

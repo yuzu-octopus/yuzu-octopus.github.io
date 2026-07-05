@@ -3,6 +3,7 @@ import { draculaColors } from '../theme/dracula';
 import { tools, type ToolCategory } from '../data/tools';
 import { ToolCard } from './ToolCard';
 import { SectionHeading } from './SectionHeading';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const categorized = tools.reduce<Record<ToolCategory, typeof tools>>((acc, tool) => {
   (acc[tool.category] ??= []).push(tool);
@@ -10,10 +11,14 @@ const categorized = tools.reduce<Record<ToolCategory, typeof tools>>((acc, tool)
 }, {} as Record<ToolCategory, typeof tools>);
 
 export function Workspace() {
+  const sectionRef = useScrollReveal<HTMLElement>();
+
   return (
     <Box
       component="section"
       id="workspace"
+      ref={sectionRef}
+      className="reveal"
       sx={{
         minHeight: { xs: 'auto', md: '100vh' },
         padding: '4rem 0',

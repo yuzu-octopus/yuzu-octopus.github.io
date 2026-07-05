@@ -48,6 +48,7 @@ export function Hero() {
             color: draculaColors.foreground,
             border: '1px solid transparent',
             fontFamily: '"JetBrainsMono Nerd Font", "JetBrains Mono", monospace',
+            transition: 'transform 250ms cubic-bezier(0.4, 0, 0.2, 1), background-color 250ms cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': {
               backgroundColor: 'transparent',
               color: draculaColors.purple,

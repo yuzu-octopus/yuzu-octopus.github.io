@@ -3,12 +3,17 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { draculaColors } from '../theme/dracula';
 import { SectionHeading } from './SectionHeading';
 import { projects } from '../data/projects';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 export function Projects() {
+  const sectionRef = useScrollReveal<HTMLElement>();
+
   return (
     <Box
       component="section"
       id="projects"
+      ref={sectionRef}
+      className="reveal"
       sx={{
         minHeight: { xs: 'auto', md: '100vh' },
         padding: '4rem 0',
@@ -21,6 +26,7 @@ export function Projects() {
           projects.map((project) => (
             <Card
               key={project.id}
+              className="hover-lift"
               sx={{
                 backgroundColor: draculaColors.currentLine,
                 borderRadius: '8px',
@@ -88,6 +94,7 @@ export function Projects() {
                       color: draculaColors.cyan,
                       borderColor: draculaColors.cyan,
                       fontFamily: "'JetBrainsMono Nerd Font', 'JetBrains Mono', monospace",
+                      transition: 'transform 250ms cubic-bezier(0.4, 0, 0.2, 1), background-color 250ms cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
                         borderColor: draculaColors.pink,
                         color: draculaColors.pink,

@@ -3,12 +3,17 @@ import { draculaColors } from '../theme/dracula';
 import { configs } from '../data/configs';
 import { ConfigCard } from './ConfigCard';
 import { SectionHeading } from './SectionHeading';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 export function ConfigsGallery() {
+  const sectionRef = useScrollReveal<HTMLElement>();
+
   return (
     <Box
       component="section"
       id="configs"
+      ref={sectionRef}
+      className="reveal"
       sx={{
         minHeight: { xs: 'auto', md: '100vh' },
         padding: '4rem 0',
