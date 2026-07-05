@@ -14,23 +14,17 @@ import {
   IconButton,
   useMediaQuery,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import HomeIcon from '@mui/icons-material/Home';
-import PersonIcon from '@mui/icons-material/Person';
-import CodeIcon from '@mui/icons-material/Code';
-import DesktopMacIcon from '@mui/icons-material/DesktopMac';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import GitHubIcon from '@mui/icons-material/GitHub';
+import { Icon } from './Icon';
 import { draculaColors } from '../theme/dracula';
 import { SITE } from '../data/site';
 import { useScrollSpy } from '../hooks/useScrollSpy';
 
 const navItems = [
-  { text: 'Home', icon: <HomeIcon />, href: '#hero' },
-  { text: 'About', icon: <PersonIcon />, href: '#about' },
-  { text: 'Projects', icon: <LibraryBooksIcon />, href: '#projects' },
-  { text: 'Configs', icon: <CodeIcon />, href: '#configs' },
-  { text: 'Workspace', icon: <DesktopMacIcon />, href: '#workspace' },
+  { text: 'Home', icon: <Icon name="home" />, href: '#hero' },
+  { text: 'About', icon: <Icon name="person" />, href: '#about' },
+  { text: 'Projects', icon: <Icon name="library_books" />, href: '#projects' },
+  { text: 'Configs', icon: <Icon name="code" />, href: '#configs' },
+  { text: 'Workspace', icon: <Icon name="desktop_mac" />, href: '#workspace' },
 ];
 
 const sectionIds = ['hero', 'about', 'projects', 'configs', 'workspace'];
@@ -88,7 +82,7 @@ function DrawerContent({ onNavClick, activeSection }: { onNavClick?: () => void;
             rel="noopener noreferrer"
           >
             <ListItemIcon sx={{ color: draculaColors.foreground }}>
-              <GitHubIcon />
+              <Icon name="github" />
             </ListItemIcon>
             <ListItemText primary="GitHub" />
           </ListItemButton>
@@ -158,7 +152,7 @@ export function Sidebar() {
           },
         }}
       >
-        <MenuIcon />
+        <Icon name="menu" />
       </IconButton>
       <Drawer
         variant="temporary"

@@ -1,6 +1,5 @@
 import { IconButton } from '@mui/material';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
+import { Icon } from './Icon';
 import { useTheme } from '../contexts/ThemeContext';
 
 export function ThemeToggle() {
@@ -22,7 +21,7 @@ export function ThemeToggle() {
         },
       }}
     >
-      {theme === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+      {theme === 'dark' ? <Icon name="light_mode" /> : <Icon name="dark_mode" />}
     </IconButton>
   );
 }
