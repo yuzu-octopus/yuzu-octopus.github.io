@@ -14,6 +14,7 @@
     <meta property="twitter:title" content="yuzu — Developer Portfolio" />
     <meta property="twitter:description" content="Solo developer who loves CTFs and configuring everything." />
     <meta property="twitter:image" content="https://yuzu-octopus.github.io/favicon.png" />
+    <meta name="theme-color" content="#282a36">
     <title>yuzu — Developer Portfolio</title>
     <style>
       @font-face {
@@ -38,6 +39,15 @@
         font-display: swap;
       }
     </style>
+    <script>
+      (function() {
+        var theme = localStorage.getItem('theme');
+        if (!theme) {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

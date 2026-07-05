@@ -1,9 +1,13 @@
+@import './theme.css';
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
   font-family: 'JetBrainsMono Nerd Font', 'JetBrains Mono', monospace;
+  background-color: var(--bg);
+  color: var(--fg);
 }
 
 code {

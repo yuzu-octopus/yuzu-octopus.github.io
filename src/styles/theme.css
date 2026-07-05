@@ -1,0 +1,29 @@
+/* Dark theme (Dracula) */
+[data-theme="dark"] {
+  --bg: #282a36;
+  --panel: #44475a;
+  --fg: #f8f8f2;
+  --muted: #8ca0d7;
+  --purple: #bd93f9;
+  --pink: #ff79c6;
+  --cyan: #8be9fd;
+  --green: #50fa7b;
+  --orange: #ffb86c;
+  --red: #ff5555;
+  --yellow: #f1fa8c;
+}
+
+/* Light theme (Alucard) */
+[data-theme="light"] {
+  --bg: #FFFBEB;
+  --panel: #E2DECA;
+  --fg: #1F1F1F;
+  --muted: #6C664B;
+  --purple: #644AC9;
+  --pink: #A3144D;
+  --cyan: #0891C2;
+  --green: #14710A;
+  --orange: #A34D14;
+  --red: #CB3A2A;
+  --yellow: #846E15;
+}
