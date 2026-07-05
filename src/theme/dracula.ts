@@ -18,18 +18,18 @@ export const draculaTheme = createTheme({
   palette: {
     mode: 'dark',
     background: {
-      default: 'var(--bg)',
-      paper: 'var(--panel)',
+      default: draculaColors.background,
+      paper: draculaColors.currentLine,
     },
     primary: {
-      main: 'var(--purple)',
+      main: draculaColors.purple,
     },
     secondary: {
-      main: 'var(--pink)',
+      main: draculaColors.pink,
     },
     text: {
-      primary: 'var(--fg)',
-      secondary: 'var(--muted)',
+      primary: draculaColors.foreground,
+      secondary: draculaColors.comment,
     },
   },
   typography: {
@@ -57,21 +57,21 @@ export const draculaTheme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: 'var(--bg)',
-          color: 'var(--fg)',
+          backgroundColor: draculaColors.background,
+          color: draculaColors.foreground,
         },
         '::-webkit-scrollbar': {
           width: '8px',
         },
         '::-webkit-scrollbar-track': {
-          background: 'var(--bg)',
+          background: draculaColors.background,
         },
         '::-webkit-scrollbar-thumb': {
-          background: 'var(--panel)',
+          background: draculaColors.currentLine,
           borderRadius: '4px',
         },
         '::-webkit-scrollbar-thumb:hover': {
-          background: 'var(--muted)',
+          background: draculaColors.comment,
         },
       },
     },
