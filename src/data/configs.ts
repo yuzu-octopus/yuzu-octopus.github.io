@@ -4,7 +4,7 @@ export interface Config {
   id: string;
   name: string;
   description: string;
-  screenshot: string;
+  screenshot?: string;
   sourceUrl: string;
   rawUrl: string;
   language: ConfigLanguage;
@@ -40,7 +40,7 @@ export const configs: Config[] = [
   },
   {
     id: 'opencode',
-    name: 'OpenCode',
+    name: 'MiMoCode',
     description: 'AI coding assistant with plugin ecosystem and MCP server integrations',
     screenshot: '/screenshots/opencode.png',
     sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/opencode/opencode.jsonc',
@@ -52,7 +52,6 @@ export const configs: Config[] = [
     name: 'Nushell Environment',
     description:
       "Nushell's environment configuration: editor, PATH, color settings, and LS_COLORS via vivid Dracula",
-    screenshot: '/screenshots/nushell-env.png',
     sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/nushell/env.nu',
     rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/nushell/env.nu',
     language: 'nu',
@@ -62,7 +61,6 @@ export const configs: Config[] = [
     name: 'Nushell Config',
     description:
       'Shell aliases, configuration flags, history settings, fuzzy completions, and starship prompt integration',
-    screenshot: '/screenshots/nushell-config.png',
     sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/nushell/config.nu',
     rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/nushell/config.nu',
     language: 'nu',

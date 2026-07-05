@@ -65,13 +65,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
             border: `1px solid ${draculaColors.comment}`,
           }}
         >
-          {imgError ? (
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 120 }}>
-              <Typography variant="caption" sx={{ color: draculaColors.comment }}>
-                Screenshot unavailable
-              </Typography>
-            </Box>
-          ) : (
+          {config.screenshot && !imgError ? (
             <img
               src={config.screenshot}
               alt={config.name}
@@ -83,6 +77,12 @@ export function ConfigCard({ config }: ConfigCardProps) {
               }}
               onError={() => setImgError(true)}
             />
+          ) : !config.screenshot ? null : (
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 120 }}>
+              <Typography variant="caption" sx={{ color: draculaColors.comment }}>
+                Screenshot unavailable
+              </Typography>
+            </Box>
           )}
         </Box>
         <Collapse in={expanded} timeout="auto" unmountOnExit>

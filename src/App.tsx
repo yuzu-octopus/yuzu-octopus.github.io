@@ -1,6 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { ThemeProvider, CssBaseline, useMediaQuery } from '@mui/material';
 import { draculaTheme } from './theme/dracula';
+import { ThemeProvider as AppThemeProvider } from './contexts/ThemeContext';
+import { ThemeToggle } from './components/ThemeToggle';
 import { Sidebar, drawerWidth } from './components/Sidebar';
 import './styles/global.css';
 
@@ -14,9 +16,11 @@ function App() {
   const isDesktop = useMediaQuery('(min-width:900px)');
 
   return (
-    <ThemeProvider theme={draculaTheme}>
-      <CssBaseline />
-      <Sidebar />
+    <AppThemeProvider>
+      <ThemeProvider theme={draculaTheme}>
+        <CssBaseline />
+        <ThemeToggle />
+        <Sidebar />
       <main style={{ marginLeft: isDesktop ? drawerWidth : 0 }}>
         <Suspense fallback={null}>
           <Hero />
@@ -26,7 +30,8 @@ function App() {
           <Workspace />
         </Suspense>
       </main>
-    </ThemeProvider>
+      </ThemeProvider>
+    </AppThemeProvider>
   );
 }
 
