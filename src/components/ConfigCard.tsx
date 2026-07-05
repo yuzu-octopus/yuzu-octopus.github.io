@@ -8,8 +8,7 @@ import {
   Collapse,
   Box,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { Icon } from './Icon';
 import { draculaSyntaxTheme } from '../theme/draculaSyntax';
 import { useConfigCode } from '../hooks/useConfigCode';
 
@@ -139,12 +138,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
           sx={{ color: draculaColors.purple }}
         >
           {expanded ? 'Hide Source' : 'View Source'}
-          <ExpandMoreIcon
-            sx={{
-              transform: expanded ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.2s',
-            }}
-          />
+          <Icon name="expand_more" size={20} />
         </Button>
         {config.sourceUrl && (
           <Button
@@ -152,7 +146,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
             href={config.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            endIcon={<OpenInNewIcon />}
+            endIcon={<Icon name="open_in_new" size={18} />}
             sx={{ color: draculaColors.cyan }}
           >
             Full Config

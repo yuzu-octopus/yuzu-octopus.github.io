@@ -23,6 +23,7 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { draculaColors } from '../theme/dracula';
 import { SITE } from '../data/site';
+import { useScrollSpy } from '../hooks/useScrollSpy';
 
 const navItems = [
   { text: 'Home', icon: <HomeIcon />, href: '#hero' },
@@ -32,9 +33,11 @@ const navItems = [
   { text: 'Workspace', icon: <DesktopMacIcon />, href: '#workspace' },
 ];
 
+const sectionIds = ['hero', 'about', 'projects', 'configs', 'workspace'];
+
 export const drawerWidth = 240;
 
-function DrawerContent({ onNavClick }: { onNavClick?: () => void }) {
+function DrawerContent({ onNavClick, activeSection }: { onNavClick?: () => void; activeSection: string }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ p: 2, textAlign: 'center' }}>
@@ -51,21 +54,29 @@ function DrawerContent({ onNavClick }: { onNavClick?: () => void }) {
       </Box>
       <Divider sx={{ borderColor: draculaColors.comment }} />
       <List sx={{ flex: 1 }}>
-        {navItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton
-              component="a"
-              href={item.href}
-              onClick={onNavClick}
-              sx={{ borderRadius: '8px', mx: 1 }}
-            >
-              <ListItemIcon sx={{ color: draculaColors.foreground }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {navItems.map((item) => {
+          const isActive = item.href === `#${activeSection}`;
+          return (
+            <ListItem key={item.text} disablePadding>
+              <ListItemButton
+                component="a"
+                href={item.href}
+                onClick={onNavClick}
+                sx={{
+                  borderRadius: '8px',
+                  mx: 1,
+                  backgroundColor: isActive ? 'color-mix(in srgb, #bd93f9 20%, transparent)' : 'transparent',
+                  color: isActive ? '#bd93f9' : draculaColors.foreground,
+                }}
+              >
+                <ListItemIcon sx={{ color: 'inherit' }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
       <Divider sx={{ borderColor: draculaColors.comment }} />
       <List>
@@ -107,6 +118,7 @@ function DrawerContent({ onNavClick }: { onNavClick?: () => void }) {
 export function Sidebar() {
   const isDesktop = useMediaQuery('(min-width:900px)');
   const [mobileOpen, setMobileOpen] = useState(false);
+  const activeSection = useScrollSpy(sectionIds);
 
   if (isDesktop) {
     return (
@@ -123,7 +135,7 @@ export function Sidebar() {
           },
         }}
       >
-        <DrawerContent />
+        <DrawerContent activeSection={activeSection} />
       </Drawer>
     );
   }
@@ -162,7 +174,7 @@ export function Sidebar() {
           },
         }}
       >
-        <DrawerContent onNavClick={() => setMobileOpen(false)} />
+        <DrawerContent onNavClick={() => setMobileOpen(false)} activeSection={activeSection} />
       </Drawer>
     </>
   );

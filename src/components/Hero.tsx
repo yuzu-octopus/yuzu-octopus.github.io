@@ -1,5 +1,5 @@
 import { Avatar, Typography, Button, Container, Box } from '@mui/material';
-import GitHubIcon from '@mui/icons-material/GitHub';
+import { Icon } from './Icon';
 import { draculaColors } from '../theme/dracula';
 import { SITE } from '../data/site';
 
@@ -39,7 +39,7 @@ export function Hero() {
         </Typography>
         <Button
           variant="contained"
-          startIcon={<GitHubIcon />}
+          startIcon={<Icon name="github" />}
           href={SITE.githubUrl}
           target="_blank"
           rel="noopener noreferrer"

@@ -1,5 +1,5 @@
 import { Card, CardContent, Typography, Box, IconButton } from '@mui/material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { Icon } from './Icon';
 import { draculaColors } from '../theme/dracula';
 import type { Tool } from '../data/tools';
 
@@ -31,7 +31,7 @@ export function ToolCard({ tool }: ToolCardProps) {
               rel="noopener noreferrer"
               sx={{ color: draculaColors.comment }}
             >
-              <OpenInNewIcon fontSize="small" />
+              <Icon name="open_in_new" size={20} />
             </IconButton>
           )}
         </Box>

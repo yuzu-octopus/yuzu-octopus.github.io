@@ -1,5 +1,5 @@
 import { Container, Typography, Card, CardContent, Button, Box, Chip } from '@mui/material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { Icon } from './Icon';
 import { draculaColors } from '../theme/dracula';
 import { SectionHeading } from './SectionHeading';
 import { projects } from '../data/projects';
@@ -86,7 +86,7 @@ export function Projects() {
                   <Button
                     variant="outlined"
                     size="small"
-                    startIcon={<OpenInNewIcon />}
+                    startIcon={<Icon name="open_in_new" size={18} />}
                     href={project.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
