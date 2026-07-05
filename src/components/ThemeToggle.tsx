@@ -1,6 +1,6 @@
 import { IconButton } from '@mui/material';
 import { Icon } from './Icon';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../hooks/useTheme';
 
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
