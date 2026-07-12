@@ -12,7 +12,7 @@ export const tools: Tool[] = [
   { id: 'ghostty', name: 'Ghostty', category: 'Terminal', description: 'GPU-accelerated terminal emulator', url: 'https://ghostty.org' },
   { id: 'nushell', name: 'Nushell', category: 'Terminal', description: 'Modern shell with structured data pipelines', url: 'https://www.nushell.sh' },
   { id: 'starship', name: 'Starship', category: 'Terminal', description: 'Cross-shell prompt with custom icons', url: 'https://starship.rs' },
-  { id: 'opencode', name: 'OpenCode', category: 'Editor', description: 'AI-powered coding assistant', url: 'https://opencode.ai' },
+  { id: 'mimocode', name: 'MiMoCode', category: 'Editor', description: 'AI-powered coding assistant', url: 'https://mimo.xiaomi.com' },
   { id: 'zed', name: 'Zed', category: 'Editor', description: 'High-performance code editor', url: 'https://zed.dev' },
   { id: 'python', name: 'Python', category: 'Languages', description: 'Primary language for scripts and CTF tools', url: 'https://python.org' },
   { id: 'javascript', name: 'JavaScript / TypeScript', category: 'Languages', description: 'Web development and tooling', url: 'https://typescriptlang.org' },

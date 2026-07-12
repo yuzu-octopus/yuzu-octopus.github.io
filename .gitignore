@@ -1,59 +1,54 @@
-# Logs
-logs
+# Dependencies and package-manager caches
+node_modules/
+.pnp/
+.pnp.*
+.yarn/
+.npm/
+.cache/
+
+# Build output and compiler state
+dist/
+dist-ssr/
+docs/
+coverage/
+*.tsbuildinfo
+
+# Logs and local environment files
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
-# Dependencies
-node_modules
-dist
-dist-ssr
+.env
+.env.local
+.env.*.local
 *.local
 
-# Editor directories and files
+# IDE and operating-system metadata
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
-# OS
 .DS_Store
 Thumbs.db
 
-# Agent / dev tooling
+# Local agent, browser, and verification state
+.mimocode/
 .opencode/
 .superpowers/
 .playwright-mcp/
 AGENTS.md
 page-verify.md
+scrollspy-test.png
 
-# Bun
-
-# Environment
-.env
-.env.local
-.env.*.local
-
-# Screenshot capture temp files
+# Screenshot capture intermediates and backups
 frames/
+.vhs-frames-*/
 .vhs-test-exec/
 vhs-out-test/
-
-# VHS frame captures
-.vhs-frames-*/
-
-# Screenshot backups
 *-backup.png
-
-# TypeScript project references
-*.tsbuildinfo
-
-# Docs build output (GitHub Pages publishes from ./docs)
-docs/

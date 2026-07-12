@@ -39,12 +39,12 @@ export const configs: Config[] = [
     language: 'ini',
   },
   {
-    id: 'opencode',
+    id: 'mimocode',
     name: 'MiMoCode',
     description: 'AI coding assistant with plugin ecosystem and MCP server integrations',
-    screenshot: '/screenshots/opencode.png',
-    sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/opencode/opencode.jsonc',
-    rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/opencode/opencode.jsonc',
+    screenshot: '/screenshots/mimocode.png',
+    sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/mimocode/mimocode.json',
+    rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/mimocode/mimocode.json',
     language: 'json',
   },
   {
