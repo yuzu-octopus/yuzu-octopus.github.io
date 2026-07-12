@@ -470,9 +470,9 @@ print("4/5  mimocode")
 vhs("mimocode", """Type "cd ~"
 Enter
 Sleep 1s
-Type "mimo"
+Type "mimo --trust --model opencode-go/mimo-v2.5"
 Enter
-Sleep 5s""", w=3840, h=2160, fs=48, shell="zsh")
+Sleep 35s""", w=3840, h=2160, fs=48, shell="zsh")
 # Adjust MiMoCode: auto-crop to content + scale with 10% padding (like fastfetch/starship)
 src = OUT / "mimocode.png"
 if src.exists():
