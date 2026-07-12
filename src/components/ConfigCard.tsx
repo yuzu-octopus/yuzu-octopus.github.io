@@ -58,7 +58,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
       }}
     >
       <CardContent>
-        <Typography variant="h6" sx={{ color: 'var(--purple)', mb: 1 }}>
+        <Typography variant="h6" sx={{ color: 'var(--cyan)', mb: 1 }}>
           {config.name}
         </Typography>
         <Typography variant="body2" sx={{ color: 'var(--muted)', mb: 2 }}>
@@ -126,7 +126,10 @@ export function ConfigCard({ config }: ConfigCardProps) {
                   right: 8,
                   zIndex: 1,
                   backgroundColor: 'var(--panel)',
-                  '&:hover': { backgroundColor: 'var(--purple)' },
+                  '&:hover': {
+                    backgroundColor: 'color-mix(in srgb, var(--purple) 12%, transparent)',
+                    color: 'var(--purple)',
+                  },
                 }}
               >
                 <Icon name={copied ? 'check' : 'content_copy'} size={16} />
@@ -163,7 +166,10 @@ export function ConfigCard({ config }: ConfigCardProps) {
         <Button
           size="small"
           onClick={() => setExpanded(!expanded)}
-          sx={{ color: 'var(--purple)' }}
+          sx={{
+            color: 'var(--purple)',
+            '&:hover': { backgroundColor: 'color-mix(in srgb, var(--purple) 8%, transparent)' },
+          }}
         >
           {expanded ? 'Hide Source' : 'View Source'}
           <Icon name="expand_more" size={20} />
@@ -175,7 +181,13 @@ export function ConfigCard({ config }: ConfigCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             endIcon={<Icon name="open_in_new" size={18} />}
-            sx={{ color: 'var(--cyan)' }}
+            sx={{
+              color: 'var(--cyan)',
+              '&:hover': {
+                backgroundColor: 'color-mix(in srgb, var(--pink) 8%, transparent)',
+                color: 'var(--pink)',
+              },
+            }}
           >
             Full Config
           </Button>

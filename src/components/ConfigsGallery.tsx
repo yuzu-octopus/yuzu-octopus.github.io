@@ -14,8 +14,7 @@ export function ConfigsGallery() {
       ref={sectionRef}
       className="reveal"
       sx={{
-        minHeight: { xs: 'auto', md: '100vh' },
-        padding: '4rem 0',
+        padding: { xs: '3rem 0', md: '3rem 0' },
         backgroundColor: 'var(--bg)',
       }}
     >

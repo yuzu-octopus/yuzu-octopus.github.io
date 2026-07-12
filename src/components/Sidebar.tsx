@@ -60,7 +60,13 @@ function DrawerContent({ onNavClick, activeSection }: { onNavClick?: () => void;
                   borderRadius: '8px',
                   mx: 1,
                   backgroundColor: isActive ? 'color-mix(in srgb, var(--purple) 20%, transparent)' : 'transparent',
-                  color: isActive ? 'var(--purple)' : 'var(--fg)',
+                  color: isActive ? 'var(--purple)' : 'var(--muted)',
+                  '&:hover': {
+                    backgroundColor: isActive
+                      ? 'color-mix(in srgb, var(--purple) 20%, transparent)'
+                      : 'color-mix(in srgb, var(--fg) 8%, transparent)',
+                    color: isActive ? 'var(--purple)' : 'var(--fg)',
+                  },
                 }}
               >
                 <ListItemIcon sx={{ color: 'inherit' }}>
@@ -80,8 +86,15 @@ function DrawerContent({ onNavClick, activeSection }: { onNavClick?: () => void;
             href={SITE.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
+            sx={{
+              color: 'var(--cyan)',
+              '&:hover': {
+                backgroundColor: 'color-mix(in srgb, var(--pink) 12%, transparent)',
+                color: 'var(--pink)',
+              },
+            }}
           >
-            <ListItemIcon sx={{ color: 'var(--fg)' }}>
+            <ListItemIcon sx={{ color: 'inherit' }}>
               <GitHubIcon />
             </ListItemIcon>
             <ListItemText primary="GitHub" />
@@ -94,13 +107,13 @@ function DrawerContent({ onNavClick, activeSection }: { onNavClick?: () => void;
         </Typography>
         <Typography variant="caption" sx={{ color: 'var(--muted)', display: 'block' }}>
           Powered by{' '}
-          <Link href="https://pages.github.com" target="_blank" rel="noopener" sx={{ color: 'var(--purple)' }}>
+          <Link href="https://pages.github.com" target="_blank" rel="noopener" sx={{ color: 'var(--cyan)', '&:hover': { color: 'var(--pink)' } }}>
             GitHub Pages
           </Link>
         </Typography>
         <Typography variant="caption" sx={{ color: 'var(--muted)', display: 'block' }}>
           Made with{' '}
-          <Link href="https://vite.dev" target="_blank" rel="noopener" sx={{ color: 'var(--purple)' }}>
+          <Link href="https://vite.dev" target="_blank" rel="noopener" sx={{ color: 'var(--cyan)', '&:hover': { color: 'var(--pink)' } }}>
             Vite
           </Link>
         </Typography>
@@ -148,7 +161,8 @@ export function Sidebar() {
           backgroundColor: 'var(--panel)',
           border: '1px solid var(--muted)',
           '&:hover': {
-            backgroundColor: 'var(--muted)',
+            backgroundColor: 'color-mix(in srgb, var(--fg) 8%, transparent)',
+            color: 'var(--fg)',
           },
         }}
       >

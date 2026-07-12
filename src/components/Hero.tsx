@@ -8,12 +8,12 @@ export function Hero() {
       component="section"
       id="hero"
       sx={{
-        minHeight: { xs: 'auto', md: '100vh' },
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        minHeight: { xs: 'auto', md: '100vh' },
         backgroundColor: 'var(--bg)',
-        padding: { xs: '4rem 0', md: 0 },
+        padding: { xs: '5rem 0 3rem', md: 0 },
       }}
     >
       <Container maxWidth="md" sx={{ textAlign: 'center' }}>
@@ -52,6 +52,7 @@ export function Hero() {
               backgroundColor: 'transparent',
               color: 'var(--purple)',
               border: '1px solid var(--purple)',
+              transform: 'translateY(-1px)',
             },
           }}
         >

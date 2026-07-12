@@ -19,8 +19,7 @@ export function Workspace() {
       ref={sectionRef}
       className="reveal"
       sx={{
-        minHeight: { xs: 'auto', md: '100vh' },
-        padding: '4rem 0',
+        padding: { xs: '3rem 0', md: '3rem 0' },
         backgroundColor: 'var(--panel)',
       }}
     >
@@ -29,7 +28,7 @@ export function Workspace() {
         {Object.keys(categorized).length > 0 ? (
           Object.entries(categorized).map(([category, categoryTools]) => (
             <Box key={category} sx={{ mb: 4 }}>
-              <Typography variant="h6" sx={{ color: 'var(--pink)', mb: 1 }}>
+              <Typography variant="h6" sx={{ color: 'var(--purple)', mb: 1 }}>
                 {category}
               </Typography>
               <Grid container spacing={2}>

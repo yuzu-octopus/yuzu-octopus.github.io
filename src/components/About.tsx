@@ -12,11 +12,10 @@ export function About() {
       ref={sectionRef}
       className="reveal"
       sx={{
-        minHeight: { xs: 'auto', md: '100vh' },
         display: 'flex',
         alignItems: 'center',
         backgroundColor: 'var(--panel)',
-        padding: '4rem 0',
+        padding: { xs: '3rem 0', md: '3rem 0' },
       }}
     >
       <Container maxWidth="md">

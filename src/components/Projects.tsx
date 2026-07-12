@@ -14,8 +14,7 @@ export function Projects() {
       ref={sectionRef}
       className="reveal"
       sx={{
-        minHeight: { xs: 'auto', md: '100vh' },
-        padding: '4rem 0',
+        padding: { xs: '3rem 0', md: '3rem 0' },
         backgroundColor: 'var(--bg)',
       }}
     >
@@ -43,7 +42,7 @@ export function Projects() {
 
                 <Typography
                   variant="body1"
-                  sx={{ color: 'var(--fg)', mb: 2, lineHeight: 1.8 }}
+                  sx={{ color: 'var(--muted)', mb: 2, lineHeight: 1.8 }}
                 >
                   {project.description}
                 </Typography>
@@ -97,6 +96,8 @@ export function Projects() {
                       '&:hover': {
                         borderColor: 'var(--pink)',
                         color: 'var(--pink)',
+                        backgroundColor: 'color-mix(in srgb, var(--pink) 8%, transparent)',
+                        transform: 'translateY(-1px)',
                       },
                     }}
                   >

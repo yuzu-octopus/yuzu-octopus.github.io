@@ -28,7 +28,13 @@ export function ToolCard({ tool }: ToolCardProps) {
               href={tool.url}
               target="_blank"
               rel="noopener noreferrer"
-              sx={{ color: 'var(--muted)' }}
+              sx={{
+                color: 'var(--cyan)',
+                '&:hover': {
+                  backgroundColor: 'color-mix(in srgb, var(--pink) 8%, transparent)',
+                  color: 'var(--pink)',
+                },
+              }}
             >
               <Icon name="open_in_new" size={20} />
             </IconButton>
