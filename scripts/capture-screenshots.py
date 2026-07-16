@@ -325,7 +325,7 @@ Set Shell "{shell}"
 # ============================================================
 # 1. fastfetch — side-by-side logo + info (4K)
 # ============================================================
-print("1/4  fastfetch")
+print("1/5  fastfetch")
 sf = capture_fastfetch_side_by_side()
 vhs("fastfetch", f"""Type "cls"
 Enter
@@ -377,7 +377,7 @@ if src.exists():
 # ============================================================
 # 2. starship — capture prompt, single line with padding (4K)
 # ============================================================
-print("2/4  starship")
+print("2/5  starship")
 sf = capture_lines("starship", ["starship", "prompt"], keep="middle")
 vhs("starship", f"""Type "cls"
 Enter
@@ -458,7 +458,7 @@ if src.exists():
 # ============================================================
 # 3. ghostty — boo animation, trimmed with gifsicle (4K)
 # ============================================================
-print("3/4  ghostty")
+print("3/5  ghostty")
 vhs("ghostty", """Type "ghostty +boo"
 Enter
 Sleep 15s""", w=3840, h=2160, fs=28, gif=True, shell="zsh")
