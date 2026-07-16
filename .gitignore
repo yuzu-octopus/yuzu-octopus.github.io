@@ -45,10 +45,24 @@ Thumbs.db
 AGENTS.md
 page-verify.md
 scrollspy-test.png
+plans/
 
-# Screenshot capture intermediates and backups
-frames/
-.vhs-frames-*/
-.vhs-test-exec/
-vhs-out-test/
+# Stale debug screenshots and intermediate captures
 *-backup.png
+*-final.png
+*-section.png
+*-detail.png
+*-fresh.png
+*-debug.png
+*-working.png
+*-fixed.png
+*-light-mode.png
+verify-*.png
+configs-*.png
+ghostty-*.png
+mimocode-*.png
+yuzu-portfolio-*.png
+about-section.png
+current-state.png
+page-check.png
+fix-plan.md
