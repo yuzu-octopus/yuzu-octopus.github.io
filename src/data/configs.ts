@@ -43,9 +43,9 @@ export const configs: Config[] = [
     name: 'omp',
     description: 'AI coding assistant with plugin ecosystem and MCP server integrations',
     screenshot: '/screenshots/omp.png',
-    sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/omp/omp.json',
-    rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/omp/omp.json',
-    language: 'json',
+    sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/omp/omp.yaml',
+    rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/omp/omp.yaml',
+    language: 'yaml',
   },
   {
     id: 'nushell-env',
