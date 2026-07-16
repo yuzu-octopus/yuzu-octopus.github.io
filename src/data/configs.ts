@@ -41,7 +41,7 @@ export const configs: Config[] = [
   {
     id: 'omp',
     name: 'omp',
-    description: 'A coding agent with the IDE wired in.',
+    description: 'AI coding agent with IDE integration, plugin system, and MCP servers',
     screenshot: '/screenshots/omp.png',
     sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/omp/omp.yaml',
     rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/omp/omp.yaml',
