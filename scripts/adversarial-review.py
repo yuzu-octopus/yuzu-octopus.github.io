@@ -110,27 +110,27 @@ def main():
             results["screenshot_files"].append(card_screenshot)
             print(f"  Card screenshot saved to {card_screenshot}")
         
-        # Check for MiMoCode specifically
-        print("\n=== CHECKING MIMOCODE CARD ===")
-        mimocode_card = page.locator('text=MiMoCode').first
-        if mimocode_card.count() > 0:
-            mimocode_card.scroll_into_view_if_needed()
+        # Check for omp specifically
+        print("\n=== CHECKING OMP CARD ===")
+        omp_card = page.locator('text=omp').first
+        if omp_card.count() > 0:
+            omp_card.scroll_into_view_if_needed()
             page.wait_for_timeout(500)
             
-            mimocode_parent = mimocode_card.locator('xpath=ancestor::div[contains(@class, "MuiCard-root")]')
-            if mimocode_parent.count() > 0:
-                card = mimocode_parent.first
+            omp_parent = omp_card.locator('xpath=ancestor::div[contains(@class, "MuiCard-root")]')
+            if omp_parent.count() > 0:
+                card = omp_parent.first
                 
-                mimocode_screenshot = "/tmp/mimocode_card.png"
-                card.screenshot(path=mimocode_screenshot)
-                results["screenshot_files"].append(mimocode_screenshot)
-                print(f"MiMoCode card screenshot saved to {mimocode_screenshot}")
+                omp_screenshot = "/tmp/omp_card.png"
+                card.screenshot(path=omp_screenshot)
+                results["screenshot_files"].append(omp_screenshot)
+                print(f"omp card screenshot saved to {omp_screenshot}")
                 
                 btn = card.locator('button:has-text("Full Config"), a:has-text("Full Config")')
                 if btn.count() > 0:
                     btn_visible = btn.first.is_visible()
                     btn_text = btn.first.text_content()
-                    print(f"MiMoCode Full Config button: visible={btn_visible}, text='{btn_text}'")
+                    print(f"omp Full Config button: visible={btn_visible}, text='{btn_text}'")
                     
                     btn_style = btn.first.evaluate('''el => {
                         const style = window.getComputedStyle(el);
@@ -146,14 +146,14 @@ def main():
                     }''')
                     print(f"Button styles: {json.dumps(btn_style, indent=2)}")
                     
-                    results["mimocode_button"] = {
+                    results["omp_button"] = {
                         "visible": btn_visible,
                         "text": btn_text,
                         "styles": btn_style
                     }
                 else:
-                    print("WARNING: MiMoCode card has no 'Full Config' button!")
-                    results["issues"].append("MiMoCode card missing 'Full Config' button")
+                    print("WARNING: omp card has no 'Full Config' button!")
+                    results["issues"].append("omp card missing 'Full Config' button")
         
         browser.close()
     

@@ -464,17 +464,17 @@ Enter
 Sleep 15s""", w=3840, h=2160, fs=28, gif=True, shell="zsh")
 
 # ============================================================
-# 4. MiMoCode — live TUI at ~ (4K)
+# 4. omp — live TUI at ~ (4K)
 # ============================================================
-print("4/5  mimocode")
-vhs("mimocode", """Type "cd ~"
+print("4/5  omp")
+vhs("omp", """Type "cd ~"
 Enter
 Sleep 1s
-Type "mimo --trust --model opencode-go/mimo-v2.5"
+Type "omp"
 Enter
 Sleep 35s""", w=3840, h=2160, fs=48, shell="zsh")
-# Adjust MiMoCode: auto-crop to content + scale with 10% padding (like fastfetch/starship)
-src = OUT / "mimocode.png"
+# Adjust omp: auto-crop to content + scale with 10% padding (like fastfetch/starship)
+src = OUT / "omp.png"
 if src.exists():
     from PIL import Image
     img = Image.open(src)
@@ -505,7 +505,7 @@ if src.exists():
     paste_y = (2016 - scaled_h) // 2
     new_img.paste(scaled, (paste_x, paste_y))
     new_img.save(src)
-    print(f"  mimocode: content {cw}x{ch} → 3683x2016 (scaled {scale:.3f}x, 10% padding)")
+    print(f"  omp: content {cw}x{ch} → 3683x2016 (scaled {scale:.3f}x, 10% padding)")
 
 # ============================================================
 # 5. code-runner — hello world + 1..5 counting (GIF, 4K)
