@@ -13,8 +13,8 @@ export function ConfigsGallery() {
         <SectionHeading>Configs</SectionHeading>
         {configs.length > 0 ? (
           <Grid columns={{ minWidth: 300, max: 2 }} gap={4}>
-            {configs.map((config) => (
-              <ConfigCard key={config.id} config={config} />
+            {configs.map((config, i) => (
+              <ConfigCard key={config.id} config={config} spanFull={i === configs.length - 1} />
             ))}
           </Grid>
         ) : (

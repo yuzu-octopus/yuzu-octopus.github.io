@@ -15,6 +15,7 @@ import { useConfigCode } from '../hooks/useConfigCode';
 
 interface ConfigCardProps {
   config: Config;
+  spanFull?: boolean;
 }
 
 const languageMap: Record<ConfigLanguage, string> = {
@@ -28,7 +29,7 @@ const languageMap: Record<ConfigLanguage, string> = {
   nu: 'plaintext',
 };
 
-export function ConfigCard({ config }: ConfigCardProps) {
+export function ConfigCard({ config, spanFull }: ConfigCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [retryNonce, setRetryNonce] = useState(0);
@@ -36,7 +37,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
   const { code: fetchedCode, loading, error } = useConfigCode(config.rawUrl, expanded, retryNonce);
 
   return (
-    <GridSpan columns={expanded ? 'full' : undefined}>
+    <GridSpan columns={expanded || spanFull ? 'full' : undefined}>
       <Card>
         <VStack gap={3}>
           <VStack gap={2}>
