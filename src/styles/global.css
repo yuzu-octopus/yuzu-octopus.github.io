@@ -37,32 +37,13 @@ html {
   scroll-margin-top: calc(var(--space-gap) * 4);
 }
 
-/* Config screenshots: bordered media inside cards. */
+/* Config screenshots: bordered media inside cards, natural ratio. */
 img.shot {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  overflow: hidden;
   border: 1px solid var(--color-widget-content-border);
   border-radius: var(--radius-element);
-}
-
-/* Hidden must beat the unlayered img.shot display rule: the kit reset hides
-   [hidden] inside @layer reset (zero specificity), which unlayered consumer
-   styles override. Without this, loading wells double up with empty images. */
-img.shot[hidden] {
-  display: none;
-}
-
-/* Placeholder well while a preview loads, fails, or is absent: same
-   footprint as the image so cards hold their shape. */
-.shot-well {
-  aspect-ratio: 16 / 9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* 24px hit target for icon-only links: 16px glyph + 2x4px padding,

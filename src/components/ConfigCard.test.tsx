@@ -18,26 +18,28 @@ const withShot: Config = {
 const noShot: Config = { ...withShot, id: 'noscreen', screenshot: undefined };
 
 describe('ConfigPreview', () => {
-  it('shows a loading well before the image loads', () => {
+  it('renders the gated image with measured dimensions', () => {
     render(<ConfigCard config={withShot} />);
-    expect(screen.getByText('Loading preview…')).toBeInTheDocument();
+    const img = screen.getByAltText('Test screenshot');
+    expect(img).toHaveAttribute('src', '/screenshots/test.png');
+    expect(img).toHaveAttribute('width', '100');
+    expect(img).toHaveAttribute('height', '100');
   });
 
-  it('swaps the well for the image on load', () => {
+  it('keeps the image after load', () => {
     render(<ConfigCard config={withShot} />);
     fireEvent.load(screen.getByAltText('Test screenshot'));
-    expect(screen.queryByText('Loading preview…')).not.toBeInTheDocument();
-    expect(screen.getByAltText('Test screenshot')).toBeVisible();
+    expect(screen.getByAltText('Test screenshot')).toBeInTheDocument();
   });
 
-  it('shows a message instead of a blank well on error', () => {
+  it('unmounts the preview on error instead of leaving a blank well', () => {
     render(<ConfigCard config={withShot} />);
     fireEvent.error(screen.getByAltText('Test screenshot'));
-    expect(screen.getByText('Preview unavailable')).toBeInTheDocument();
+    expect(screen.queryByAltText('Test screenshot')).not.toBeInTheDocument();
   });
 
-  it('shows a placeholder well when no screenshot exists', () => {
-    render(<ConfigCard config={noShot} />);
-    expect(screen.getByText('No preview available')).toBeInTheDocument();
+  it('renders no preview element at all when no screenshot exists', () => {
+    const { container } = render(<ConfigCard config={noShot} />);
+    expect(container.querySelector('img.shot')).toBeNull();
   });
 });

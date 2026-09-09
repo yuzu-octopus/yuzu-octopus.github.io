@@ -31,11 +31,11 @@ const languageMap: Record<ConfigLanguage, string> = {
 
 const PREVIEW_TIMEOUT_MS = 15000;
 
-// Screenshot well with loader states: a stalled decode (large animated GIFs)
-// or a missing file shows a message, never a blank well. The src is set
-// only once the well nears the viewport, so below-fold previews cost
-// nothing until scrolled to — and a hidden lazy img would never intersect,
-// which is why gating replaces loading="lazy".
+// Screenshot preview: the img mounts only once the card nears the viewport,
+// so below-fold previews cost nothing until scrolled to (gating replaces
+// loading="lazy", which would never fire on a hidden element). Measured
+// width/height attrs reserve the footprint, so no layout shift on arrival.
+// No screenshot or a failed load renders nothing at all.
 function ConfigPreview({ config }: { config: Config }) {
   // No-observer environments (jsdom) start visible: nothing to observe.
   const [visible, setVisible] = useState(() => typeof IntersectionObserver === 'undefined');
@@ -44,7 +44,7 @@ function ConfigPreview({ config }: { config: Config }) {
 
   useEffect(() => {
     if (visible || failed) return;
-    const el = document.getElementById(`shot-${config.id}`);
+    const el = document.getElementById(`config-${config.id}`);
     if (!el) return;
     const io = new IntersectionObserver(
       (entries) => {
@@ -59,57 +59,30 @@ function ConfigPreview({ config }: { config: Config }) {
     return () => io.disconnect();
   }, [config.id, config.screenshot, visible, failed]);
 
-  // Timeout is a subscription, not a render sync: it only ever marks a
-  // still-loading preview failed. React fires onLoad even for cache hits
-  // because src is set on mount, after listeners attach.
+  // Timeout is a subscription, not a render sync: a still-loading preview
+  // past the deadline is treated as failed and unmounts. React fires onLoad
+  // even for cache hits because src is set on mount, after listeners attach.
   useEffect(() => {
     if (!visible || loaded || failed || !config.screenshot) return;
     const timer = setTimeout(() => setFailed(true), PREVIEW_TIMEOUT_MS);
     return () => clearTimeout(timer);
   }, [config.id, config.screenshot, visible, loaded, failed]);
 
-  if (!config.screenshot || failed) {
-    return (
-      <Card padding={3} className="shot-well">
-        <Text type="supporting" justify="center">
-          {config.screenshot ? 'Preview unavailable' : 'No preview available'}
-        </Text>
-      </Card>
-    );
-  }
-  if (!visible) {
-    return (
-      <Card padding={3} className="shot-well" id={`shot-${config.id}`}>
-        <Text type="supporting" justify="center">
-          Loading preview…
-        </Text>
-      </Card>
-    );
-  }
+  if (!config.screenshot || failed || !visible) return null;
   return (
-    <>
-      {!loaded && (
-        <Card padding={3} className="shot-well" id={`shot-${config.id}`}>
-          <Text type="supporting" justify="center">
-            Loading preview…
-          </Text>
-        </Card>
-      )}
-      <img
-        className="shot"
-        src={config.screenshot}
-        width={config.screenshotWidth}
-        height={config.screenshotHeight}
-        alt={`${config.name} screenshot`}
-        decoding="async"
-        hidden={!loaded}
-        onLoad={() => {
-          setLoaded(true);
-          setFailed(false);
-        }}
-        onError={() => setFailed(true)}
-      />
-    </>
+    <img
+      className="shot"
+      src={config.screenshot}
+      width={config.screenshotWidth}
+      height={config.screenshotHeight}
+      alt={`${config.name} screenshot`}
+      decoding="async"
+      onLoad={() => {
+        setLoaded(true);
+        setFailed(false);
+      }}
+      onError={() => setFailed(true)}
+    />
   );
 }
 
@@ -121,7 +94,7 @@ export function ConfigCard({ config, spanFull }: ConfigCardProps) {
 
   return (
     <GridSpan columns={expanded || spanFull ? 'full' : undefined}>
-      <Card>
+      <Card id={`config-${config.id}`}>
         <VStack gap={3}>
           <VStack gap={2}>
             <HStack gap={2} vAlign="center">
