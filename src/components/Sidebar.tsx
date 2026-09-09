@@ -2,7 +2,6 @@ import { SideNav, SideNavHeading, SideNavItem, SideNavSection } from '@astryxdes
 import { Avatar } from '@astryxdesign/core/Avatar';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Text } from '@astryxdesign/core/Text';
-import { Link } from '@astryxdesign/core/Link';
 import { VStack } from '@astryxdesign/core/Stack';
 import { Braces, ExternalLink, FolderGit2, Home, SquareTerminal, User } from 'lucide-react';
 import type { AnchorHTMLAttributes } from 'react';
@@ -48,9 +47,6 @@ export function Sidebar() {
       footer={
         <VStack gap={1}>
           <Text type="supporting">© 2026 {SITE.githubUsername}</Text>
-          <Text type="supporting">
-            Styled with <Link href="https://yuzu-octopus.github.io/astryx-dracula/">astryx-dracula</Link>
-          </Text>
         </VStack>
       }
     >

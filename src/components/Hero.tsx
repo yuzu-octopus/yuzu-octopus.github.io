@@ -34,22 +34,22 @@ export function Hero() {
 
   return (
     <Section id="hero" ref={sectionRef} className="reveal" padding={10}>
-      <VStack gap={4} hAlign="start">
+      <VStack gap={4} hAlign="center">
         <Avatar src={SITE.avatarUrl} name="yuzu" size={144} />
-        <VStack gap={2} hAlign="start">
-          <Heading level={1} type="display-1" color="accent" justify="start">
+        <VStack gap={2} hAlign="center">
+          <Heading level={1} type="display-1" color="accent" justify="center">
             Hi, I&apos;m yuzu
           </Heading>
-          <Text type="large" justify="start" textWrap="balance">
+          <Text type="large" justify="center" textWrap="balance">
             Solo developer who loves CTFs and configuring everything.
           </Text>
         </VStack>
-        <HStack gap={2} justify="start" wrap="wrap">
+        <HStack gap={2} justify="center" wrap="wrap">
           <Badge variant="yellow" label="ctf" />
           <Badge variant="green" label="dotfiles" />
           <Badge variant="cyan" label="open source" />
         </HStack>
-        <HStack gap={2} justify="start" wrap="wrap">
+        <HStack gap={2} justify="center" wrap="wrap">
           <Button
             variant="primary"
             size="lg"

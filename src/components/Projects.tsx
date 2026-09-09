@@ -22,7 +22,9 @@ export function Projects() {
             {projects.map((project) => (
               <Card key={project.id} className="hover-lift">
                 <VStack gap={3}>
-                  <Badge variant="cyan" label={project.language} />
+                  <HStack justify="start">
+                    <Badge variant="cyan" label={project.language} />
+                  </HStack>
                   <Heading level={3}>{project.name}</Heading>
                   <Text type="body" as="p" maxLines={3}>
                     {project.description}

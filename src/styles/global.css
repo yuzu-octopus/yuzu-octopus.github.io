@@ -161,3 +161,11 @@ html {
   transform: translateY(-2px);
   border-color: var(--color-accent);
 }
+
+/* Icon-link hit target: expands the tap area without shifting layout
+   (padding grows the hit box, negative margin pulls layout back).
+   Token-only: --spacing-1 is the core spacing scale (4px). */
+.icon-hit {
+  padding: var(--spacing-1);
+  margin: calc(var(--spacing-1) * -1);
+}

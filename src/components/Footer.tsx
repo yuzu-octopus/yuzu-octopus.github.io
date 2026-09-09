@@ -22,7 +22,7 @@ export function Footer() {
       <VStack gap={2} hAlign="center">
         <Text type="supporting" justify="center">
           Built with React · styled with{' '}
-          <Link href="https://yuzu-octopus.github.io/astryx-dracula/">astryx-dracula</Link> · hosted on
+          <Link href="https://yuzu-octopus.github.io/astryx-dracula/" type="inherit">astryx-dracula</Link> · hosted on
           GitHub Pages
         </Text>
         <Text type="supporting" justify="center">

@@ -104,7 +104,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              label={expanded ? 'Hide source' : 'View source'}
+              label={expanded ? 'Hide code' : 'Preview code'}
               icon={expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               onClick={() => setExpanded(!expanded)}
             />

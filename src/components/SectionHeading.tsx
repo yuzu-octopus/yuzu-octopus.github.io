@@ -14,7 +14,7 @@ export function SectionHeading({ children, lede }: SectionHeadingProps) {
       <Heading level={2} type="display-3" color="accent">
         {children}
       </Heading>
-      {lede ? <Text type="supporting">{lede}</Text> : null}
+      {lede ? <Text type="body">{lede}</Text> : null}
       <Divider />
     </VStack>
   );
