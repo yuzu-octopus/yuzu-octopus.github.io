@@ -9,6 +9,7 @@ const ConfigsGallery = lazy(() =>
   import('./components/ConfigsGallery').then((m) => ({ default: m.ConfigsGallery })),
 );
 const Workspace = lazy(() => import('./components/Workspace').then((m) => ({ default: m.Workspace })));
+const Footer = lazy(() => import('./components/Footer').then((m) => ({ default: m.Footer })));
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Projects />
         <ConfigsGallery />
         <Workspace />
+        <Footer />
       </Suspense>
     </AppShell>
   );

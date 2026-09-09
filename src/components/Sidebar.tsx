@@ -1,11 +1,15 @@
 import { SideNav, SideNavHeading, SideNavItem, SideNavSection } from '@astryxdesign/core/SideNav';
 import { Avatar } from '@astryxdesign/core/Avatar';
+import { Badge } from '@astryxdesign/core/Badge';
 import { Text } from '@astryxdesign/core/Text';
 import { Link } from '@astryxdesign/core/Link';
 import { VStack } from '@astryxdesign/core/Stack';
 import { Braces, ExternalLink, FolderGit2, Home, SquareTerminal, User } from 'lucide-react';
 import type { AnchorHTMLAttributes } from 'react';
 import { SITE } from '../data/site';
+import { configs } from '../data/configs';
+import { projects } from '../data/projects';
+import { tools } from '../data/tools';
 import { useScrollSpy } from '../hooks/useScrollSpy';
 
 function NewTabAnchor(props: AnchorHTMLAttributes<HTMLAnchorElement>) {
@@ -21,6 +25,12 @@ const navItems = [
   { text: 'Configs', icon: <Braces size={18} />, href: '#configs' },
   { text: 'Workspace', icon: <SquareTerminal size={18} />, href: '#workspace' },
 ];
+
+const counts: Record<string, number> = {
+  Projects: projects.length,
+  Configs: configs.length,
+  Workspace: tools.length,
+};
 
 export function Sidebar() {
   const activeSection = useScrollSpy(sectionIds);
@@ -52,6 +62,7 @@ export function Sidebar() {
             href={item.href}
             icon={item.icon}
             isSelected={item.href === `#${activeSection}`}
+            endContent={counts[item.text] !== undefined ? <Badge label={counts[item.text]} /> : undefined}
           />
         ))}
       </SideNavSection>

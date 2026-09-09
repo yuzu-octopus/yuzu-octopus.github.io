@@ -8,10 +8,10 @@ export function About() {
   const sectionRef = useScrollReveal<HTMLElement>();
 
   return (
-    <Section id="about" ref={sectionRef} className="reveal">
+    <Section id="about" ref={sectionRef} className="reveal" maxWidth="75ch">
       <VStack gap={4}>
         <SectionHeading>About Me</SectionHeading>
-        <VStack gap={2}>
+        <VStack gap={3}>
           <Text type="body" as="p">
             I&apos;m a solo developer passionate about security, CTFs, and crafting the perfect
             development environment. I believe that the tools you use shape how you think,

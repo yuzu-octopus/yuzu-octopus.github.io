@@ -32,9 +32,11 @@ html {
   scroll-margin-top: calc(var(--space-gap) * 4);
 }
 
-/* Config screenshots: bordered media inside cards */
+/* Config screenshots: fixed 16/9 media so card bodies align across the grid
+   regardless of source screenshot dimensions. Border/radius stay on tokens. */
 .shot {
   overflow: hidden;
+  aspect-ratio: 16 / 9;
   border: 1px solid var(--color-widget-content-border);
   border-radius: var(--radius-element);
 }
@@ -42,8 +44,8 @@ html {
 .shot img {
   display: block;
   width: 100%;
-  height: auto;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Reveal is progressive enhancement: visible by default, hidden only when
@@ -71,10 +73,80 @@ html {
     transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
       border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  /* Staggered grid-child entrances: cards are Grid children at varying DOM
+     depths, so scope by the .hover-lift hook (every grid card carries it)
+     rather than by depth. Hidden until the ancestor section reveals, then
+     each sibling steps 70ms after the previous, capped at eight. */
+  .js .reveal .hover-lift {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 450ms ease,
+      transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .js .reveal.visible .hover-lift {
+    opacity: 1;
+    transform: none;
+  }
+
+  .js .reveal.visible .hover-lift:nth-child(2),
+  .js .reveal.visible div:nth-child(2) > .hover-lift {
+    transition-delay: 70ms;
+  }
+
+  .js .reveal.visible .hover-lift:nth-child(3),
+  .js .reveal.visible div:nth-child(3) > .hover-lift {
+    transition-delay: 140ms;
+  }
+
+  .js .reveal.visible .hover-lift:nth-child(4),
+  .js .reveal.visible div:nth-child(4) > .hover-lift {
+    transition-delay: 210ms;
+  }
+
+  .js .reveal.visible .hover-lift:nth-child(5),
+  .js .reveal.visible div:nth-child(5) > .hover-lift {
+    transition-delay: 280ms;
+  }
+
+  .js .reveal.visible .hover-lift:nth-child(6),
+  .js .reveal.visible div:nth-child(6) > .hover-lift {
+    transition-delay: 350ms;
+  }
+
+  .js .reveal.visible .hover-lift:nth-child(7),
+  .js .reveal.visible div:nth-child(7) > .hover-lift {
+    transition-delay: 420ms;
+  }
+
+  .js .reveal.visible .hover-lift:nth-child(8),
+  .js .reveal.visible .hover-lift:nth-child(n + 9),
+  .js .reveal.visible div:nth-child(8) > .hover-lift,
+  .js .reveal.visible div:nth-child(n + 9) > .hover-lift {
+    transition-delay: 490ms;
+  }
+
+  /* Hover lift re-asserted: the entrance rules above out-specify the base
+     .hover-lift:hover, and the delay reset (ordered last: tied specificity
+     loses to the nth-child delays otherwise) keeps hover instant. */
+  .js .reveal.visible .hover-lift:hover,
+  .js .reveal.visible div:nth-child(n) > .hover-lift:hover {
+    transform: translateY(-2px);
+    transition-delay: 0s;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  /* Stagger is motion: cards render in final state with no delay. */
+  .js .reveal .hover-lift {
     opacity: 1;
     transform: none;
     transition: none;

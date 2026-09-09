@@ -23,4 +23,10 @@ describe('App', () => {
     expect(await screen.findByRole('heading', { name: 'Configs' })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: 'Workspace' })).toBeInTheDocument();
   });
+
+  it('renders the footer colophon and back-to-top', async () => {
+    render(<App />);
+    expect(await screen.findByText(/styled with/)).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Back to top' })).toBeInTheDocument();
+  });
 });

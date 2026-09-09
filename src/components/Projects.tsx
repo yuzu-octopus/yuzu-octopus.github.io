@@ -16,19 +16,19 @@ export function Projects() {
   return (
     <Section id="projects" ref={sectionRef} className="reveal">
       <VStack gap={4}>
-        <SectionHeading>Projects</SectionHeading>
+        <SectionHeading lede="Things I built and maintain.">Projects</SectionHeading>
         {projects.length > 0 ? (
           <Grid columns={{ minWidth: 320 }} gap={4}>
             {projects.map((project) => (
               <Card key={project.id} className="hover-lift">
                 <VStack gap={3}>
+                  <Badge variant="cyan" label={project.language} />
                   <Heading level={3}>{project.name}</Heading>
-                  <Text type="supporting" as="p">
+                  <Text type="body" as="p" maxLines={3}>
                     {project.description}
                   </Text>
                   <HStack gap={2} wrap="wrap">
-                    <Badge variant="cyan" label={project.language} />
-                    {project.features.map((feature) => (
+                    {project.features.slice(0, 3).map((feature) => (
                       <Badge key={feature} variant="yellow" label={feature} />
                     ))}
                   </HStack>
