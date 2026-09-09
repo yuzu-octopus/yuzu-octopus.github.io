@@ -1,34 +1,26 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import App from './App';
 
 describe('App', () => {
   it('renders the sidebar navigation', () => {
     render(<App />);
-    expect(screen.getByText('Home')).toBeInTheDocument();
-    expect(screen.getByText('About')).toBeInTheDocument();
-    expect(screen.getByText('Projects')).toBeInTheDocument();
-    expect(screen.getByText('Configs')).toBeInTheDocument();
-    expect(screen.getByText('Workspace')).toBeInTheDocument();
+    const nav = screen.getByRole('navigation');
+    for (const label of ['Home', 'About', 'Projects', 'Configs', 'Workspace']) {
+      expect(within(nav).getByText(label)).toBeInTheDocument();
+    }
   });
 
-  it('renders lazy-loaded hero section', async () => {
+  it('renders the hero section', () => {
     render(<App />);
-    await waitFor(() => {
-      expect(screen.getByText("Hi, I'm yuzu")).toBeInTheDocument();
-    });
+    expect(screen.getByRole('heading', { name: "Hi, I'm yuzu" })).toBeInTheDocument();
   });
 
-  it('renders lazy-loaded section headings', async () => {
+  it('renders each lazy section heading once its chunk loads', async () => {
     render(<App />);
-    await waitFor(() => {
-      expect(screen.getByText('About Me')).toBeInTheDocument();
-    });
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Projects' })).toBeInTheDocument();
-    });
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Workspace' })).toBeInTheDocument();
-    });
+    expect(await screen.findByText('About Me')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Projects' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Configs' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Workspace' })).toBeInTheDocument();
   });
 });

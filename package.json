@@ -12,15 +12,14 @@
     "test:watch": "vitest --config vitest.config.ts"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/material": "^9.0.1",
-    "@types/react-syntax-highlighter": "^15.5.13",
+    "@astryxdesign/core": "^0.5.4",
+    "astryx-dracula": "^0.1.2",
+    "lucide-react": "^1.43.0",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "react-syntax-highlighter": "^16.1.1"
+    "react-dom": "^19.2.6"
   },
   "devDependencies": {
+    "@astryxdesign/cli": "^0.5.4",
     "@eslint/js": "^10.0.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

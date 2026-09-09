@@ -1,64 +1,72 @@
-import { Avatar, Typography, Button, Container, Box } from '@mui/material';
-import { GitHubIcon } from './GitHubIcon';
+import { Avatar } from '@astryxdesign/core/Avatar';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Section } from '@astryxdesign/core/Section';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { ExternalLink } from 'lucide-react';
 import { SITE } from '../data/site';
+import { useScrollReveal } from '../hooks/useScrollReveal';
+
+function scrollToSection(id: string) {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const behavior: ScrollBehavior = reduce ? 'instant' : 'smooth';
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior });
+    return;
+  }
+  // Lazy sections may not be in the DOM yet; poll briefly, then give up.
+  let attempts = 0;
+  const timer = setInterval(() => {
+    attempts += 1;
+    const target = document.getElementById(id);
+    if (target || attempts > 10) {
+      clearInterval(timer);
+      target?.scrollIntoView({ behavior });
+    }
+  }, 200);
+}
 
 export function Hero() {
+  const sectionRef = useScrollReveal<HTMLElement>();
+
   return (
-    <Box
-      component="section"
-      id="hero"
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: { xs: 'auto', md: '100vh' },
-        backgroundColor: 'var(--bg)',
-        padding: { xs: '5rem 0 3rem', md: 0 },
-      }}
-    >
-      <Container maxWidth="md" sx={{ textAlign: 'center' }}>
-        <Avatar
-          src={SITE.avatarUrl}
-          sx={{
-            width: { xs: 100, sm: 150 },
-            height: { xs: 100, sm: 150 },
-            margin: '0 auto',
-            mb: 3,
-            border: '4px solid var(--purple)',
-          }}
-        />
-        <Typography variant="h1" sx={{ fontSize: { xs: '2rem', sm: '3rem' }, mb: 1, color: 'var(--purple)' }}>
-          Hi, I'm yuzu
-        </Typography>
-        <Typography
-          variant="h5"
-          sx={{ mb: 3, color: 'var(--muted)', fontWeight: 400 }}
-        >
-          Solo developer who loves CTFs and configuring everything.
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<GitHubIcon />}
-          href={SITE.githubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          sx={{
-            backgroundColor: 'var(--purple)',
-            color: 'var(--fg)',
-            border: '1px solid transparent',
-            fontFamily: '"JetBrainsMono Nerd Font", "JetBrains Mono", monospace',
-            transition: 'transform 250ms cubic-bezier(0.4, 0, 0.2, 1), background-color 250ms cubic-bezier(0.4, 0, 0.2, 1)',
-            '&:hover': {
-              backgroundColor: 'transparent',
-              color: 'var(--purple)',
-              border: '1px solid var(--purple)',
-              transform: 'translateY(-1px)',
-            },
-          }}
-        >
-          View GitHub
-        </Button>
-      </Container>
-    </Box>
+    <Section id="hero" ref={sectionRef} className="reveal" padding={10}>
+      <VStack gap={4} hAlign="center">
+        <Avatar src={SITE.avatarUrl} name="yuzu" size="xl" />
+        <VStack gap={2} hAlign="center">
+          <Heading level={1} type="display-2" color="accent" justify="center">
+            Hi, I&apos;m yuzu
+          </Heading>
+          <Text type="large" justify="center">
+            Solo developer who loves CTFs and configuring everything.
+          </Text>
+        </VStack>
+        <HStack gap={2} justify="center" wrap="wrap">
+          <Badge variant="yellow" label="ctf" />
+          <Badge variant="green" label="dotfiles" />
+          <Badge variant="cyan" label="open source" />
+        </HStack>
+        <HStack gap={2} justify="center" wrap="wrap">
+          <Button
+            variant="primary"
+            size="lg"
+            label="View GitHub"
+            icon={<ExternalLink size={18} />}
+            href={SITE.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          />
+          <Button
+            variant="secondary"
+            size="lg"
+            label="Browse configs"
+            onClick={() => scrollToSection('configs')}
+          />
+        </HStack>
+      </VStack>
+    </Section>
   );
 }

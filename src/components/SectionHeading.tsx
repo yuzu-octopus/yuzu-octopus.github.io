@@ -1,23 +1,18 @@
-import { Typography } from '@mui/material';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Divider } from '@astryxdesign/core/Divider';
+import { VStack } from '@astryxdesign/core/Stack';
 
 interface SectionHeadingProps {
   children: string;
-  mb?: number;
 }
 
-export function SectionHeading({ children, mb = 4 }: SectionHeadingProps) {
+export function SectionHeading({ children }: SectionHeadingProps) {
   return (
-    <Typography
-      variant="h2"
-      sx={{
-        mb,
-        color: 'var(--purple)',
-        fontSize: { xs: '1.2rem', md: '1.6rem' },
-        borderBottom: '2px solid var(--purple)',
-        pb: 1,
-      }}
-    >
-      {children}
-    </Typography>
+    <VStack gap={2}>
+      <Heading level={2} color="accent">
+        {children}
+      </Heading>
+      <Divider />
+    </VStack>
   );
 }

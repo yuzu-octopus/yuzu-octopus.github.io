@@ -1,4 +1,7 @@
-import { Container, Typography, Grid, Box } from '@mui/material';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Section } from '@astryxdesign/core/Section';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
 import { configs } from '../data/configs';
 import { ConfigCard } from './ConfigCard';
 import { SectionHeading } from './SectionHeading';
@@ -8,32 +11,21 @@ export function ConfigsGallery() {
   const sectionRef = useScrollReveal<HTMLElement>();
 
   return (
-    <Box
-      component="section"
-      id="configs"
-      ref={sectionRef}
-      className="reveal"
-      sx={{
-        padding: { xs: '3rem 0', md: '3rem 0' },
-        backgroundColor: 'var(--bg)',
-      }}
-    >
-      <Container maxWidth="lg">
+    <Section id="configs" ref={sectionRef} className="reveal">
+      <VStack gap={4}>
         <SectionHeading>Configs</SectionHeading>
         {configs.length > 0 ? (
-          <Grid container spacing={3}>
+          <Grid columns={{ minWidth: 300 }} gap={4}>
             {configs.map((config) => (
-              <Grid size={{ xs: 12, md: 6 }} key={config.id}>
-                <ConfigCard config={config} />
-              </Grid>
+              <ConfigCard key={config.id} config={config} />
             ))}
           </Grid>
         ) : (
-          <Typography sx={{ color: 'var(--muted)', textAlign: 'center', py: 4 }}>
+          <Text type="supporting" justify="center">
             No configurations to display yet.
-          </Typography>
+          </Text>
         )}
-      </Container>
-    </Box>
+      </VStack>
+    </Section>
   );
 }

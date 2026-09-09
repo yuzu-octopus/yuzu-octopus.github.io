@@ -10,10 +10,12 @@ interface UseConfigCodeResult {
  * Fetches config source code from a GitHub raw URL.
  * Only fetches when `shouldFetch` is true (e.g., user clicked "View Source").
  * Caches the result in state so re-expanding doesn't re-fetch.
+ * Bump `retryNonce` to re-attempt after a failure.
  */
 export function useConfigCode(
   rawUrl: string | undefined,
   shouldFetch: boolean,
+  retryNonce = 0,
 ): UseConfigCodeResult {
   const [code, setCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -26,6 +28,8 @@ export function useConfigCode(
       return;
     }
 
+    // A retry explicitly discards the previous attempt, then caching resumes.
+    if (retryNonce > 0) cacheRef.current.delete(rawUrl);
     // Return cached result if available
     const cached = cacheRef.current.get(rawUrl);
     if (cached !== undefined) {
@@ -51,9 +55,9 @@ export function useConfigCode(
           setLoading(false);
         }
       })
-      .catch((err: Error) => {
+      .catch((err: unknown) => {
         if (!cancelledRef.current) {
-          setError(err.message);
+          setError(err instanceof Error ? err.message : String(err));
           setLoading(false);
         }
       });
@@ -61,7 +65,7 @@ export function useConfigCode(
     return () => {
       cancelledRef.current = true;
     };
-  }, [rawUrl, shouldFetch]);
+  }, [rawUrl, shouldFetch, retryNonce]);
 
   return { code, loading, error };
 }

@@ -1,25 +1,17 @@
-@import './theme.css';
+/* App-level mechanics. Colors come from astryx-dracula tokens; nothing invented here. */
 
 html {
-  scrollbar-color: var(--muted) var(--bg);
+  scrollbar-color: var(--color-border) transparent;
   scrollbar-width: thin;
 }
 
-body {
-  font-family: 'JetBrainsMono Nerd Font', 'JetBrains Mono', monospace;
-  background-color: var(--bg);
-  color: var(--fg);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 ::selection {
-  background: var(--purple);
-  color: var(--bg);
+  background: var(--color-selection);
+  color: var(--color-text-highlight);
 }
 
 :focus-visible {
-  outline: 2px solid var(--purple);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
@@ -28,21 +20,35 @@ body {
   height: 8px;
 }
 
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-
 ::-webkit-scrollbar-thumb {
-  background: var(--muted);
-  border: 2px solid var(--bg);
-  border-radius: 8px;
+  background: var(--color-border);
+  border-radius: var(--border-radius);
 }
 
-code {
-  font-family: 'JetBrainsMono Nerd Font', 'JetBrains Mono', monospace;
+/* Anchor offset for sections under the sticky mobile bar.
+   AppShell renders div[role="main"], Section renders div: no main/section
+   elements exist, so match the id under the main role. */
+[role="main"] [id] {
+  scroll-margin-top: calc(var(--space-gap) * 4);
 }
 
-.reveal {
+/* Config screenshots: bordered media inside cards */
+.shot {
+  overflow: hidden;
+  border: 1px solid var(--color-widget-content-border);
+  border-radius: var(--radius-element);
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Reveal is progressive enhancement: visible by default, hidden only when
+   JS is present to observe (main.tsx adds .js) and motion is allowed. */
+.js .reveal {
   opacity: 0;
   transform: translateY(24px);
 }
@@ -57,62 +63,29 @@ code {
     scroll-behavior: smooth;
   }
 
-  .reveal {
+  .js .reveal {
     transition: opacity 0.6s ease, transform 0.6s ease;
   }
 
   .hover-lift {
     transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
-                border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .theme-toggle {
-    transition: background 250ms cubic-bezier(0.4, 0, 0.2, 1), border-color 250ms;
+      border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
+  .js .reveal {
     opacity: 1;
     transform: none;
     transition: none;
   }
 
-  .hover-lift:hover,
-  .theme-toggle:hover {
+  .hover-lift:hover {
     transform: none;
   }
 }
 
 .hover-lift:hover {
   transform: translateY(-2px);
-  border-color: var(--purple);
-}
-
-.theme-toggle {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 1200;
-  background: var(--panel);
-  border: 1px solid var(--muted);
-  color: var(--fg);
-  padding: 10px 12px;
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.theme-toggle:hover {
-  border-color: var(--purple);
-  color: var(--purple);
-  transform: translateY(-1px);
-}
-
-.theme-toggle .material-symbols-outlined {
-  font-size: 24px;
+  border-color: var(--color-accent);
 }

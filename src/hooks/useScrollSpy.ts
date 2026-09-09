@@ -7,6 +7,24 @@ export function useScrollSpy(ids: string[], offset = 120) {
     let observer: MutationObserver | null = null;
     let scrollHandler: (() => void) | null = null;
 
+    function onScroll() {
+      // Past the end: the last section owns the remainder even if it never
+      // crosses the offset (short closing sections).
+      if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 2) {
+        setActive(ids[ids.length - 1]);
+        return;
+      }
+      // Viewport-relative: immune to positioned ancestors (AppShell wrappers).
+      let current = ids[0];
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= offset) {
+          current = id;
+        }
+      }
+      setActive(current);
+    }
+
     function setupScrollSpy() {
       const sections = ids
         .map((id) => document.getElementById(id))
@@ -14,21 +32,9 @@ export function useScrollSpy(ids: string[], offset = 120) {
 
       if (sections.length === 0) return false;
 
-      function onScroll() {
-        const scrollY = window.scrollY + offset;
-        let current = sections[0];
-        for (const section of sections) {
-          if (section.offsetTop <= scrollY) {
-            current = section;
-          }
-        }
-        if (current) {
-          setActive(current.id);
-        }
-      }
-
       scrollHandler = onScroll;
       window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
       onScroll();
       return true;
     }
@@ -46,7 +52,10 @@ export function useScrollSpy(ids: string[], offset = 120) {
 
     return () => {
       if (observer) observer.disconnect();
-      if (scrollHandler) window.removeEventListener('scroll', scrollHandler);
+      if (scrollHandler) {
+        window.removeEventListener('scroll', scrollHandler);
+        window.removeEventListener('resize', scrollHandler);
+      }
     };
   }, [ids, offset]);
 

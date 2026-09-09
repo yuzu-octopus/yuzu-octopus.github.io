@@ -1,198 +1,118 @@
-import { useState, lazy, Suspense } from 'react';
-import {
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-  Button,
-  Collapse,
-  Box,
-  IconButton,
-} from '@mui/material';
-import { Icon } from './Icon';
-import { draculaSyntaxTheme } from '../theme/draculaSyntax';
+import { useState } from 'react';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { Card } from '@astryxdesign/core/Card';
+import { CodeBlock } from '@astryxdesign/core/CodeBlock';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Link } from '@astryxdesign/core/Link';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import type { Config, ConfigLanguage } from '../data/configs';
 import { useConfigCode } from '../hooks/useConfigCode';
-
-const SyntaxHighlighter = lazy(() =>
-  import('react-syntax-highlighter').then((m) => ({ default: m.Prism })),
-);
-import type { Config } from '../data/configs';
 
 interface ConfigCardProps {
   config: Config;
 }
 
-const languageMap: Record<string, string> = {
+const languageMap: Record<ConfigLanguage, string> = {
   json: 'json',
   jsonc: 'json',
   toml: 'toml',
   ini: 'ini',
   yaml: 'yaml',
   sh: 'bash',
+  // No Nushell grammar in the highlighter; plaintext beats wrong colors.
   nu: 'plaintext',
 };
 
 export function ConfigCard({ config }: ConfigCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [retryNonce, setRetryNonce] = useState(0);
   const lang = languageMap[config.language] || 'plaintext';
-  const { code: fetchedCode, loading, error } = useConfigCode(config.rawUrl, expanded);
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    if (fetchedCode) {
-      await navigator.clipboard.writeText(fetchedCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
+  const { code: fetchedCode, loading, error } = useConfigCode(config.rawUrl, expanded, retryNonce);
 
   return (
-    <Card
-      className="hover-lift"
-      sx={{
-        backgroundColor: 'var(--panel)',
-        borderRadius: '8px',
-        border: '1px solid var(--muted)',
-        color: 'var(--fg)',
-      }}
-    >
-      <CardContent>
-        <Typography variant="h6" sx={{ color: 'var(--cyan)', mb: 1 }}>
-          {config.name}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'var(--muted)', mb: 2 }}>
-          {config.description}
-        </Typography>
-        {config.screenshot && (
-          <Box
-            sx={{
-              backgroundColor: 'var(--panel)',
-              borderRadius: 1,
-              p: 0,
-              mb: 2,
-              overflow: 'hidden',
-              border: '1px solid var(--muted)',
-            }}
-          >
-            {!imgError ? (
+    <Card className="hover-lift">
+      <VStack gap={3}>
+        <VStack gap={2}>
+          <HStack gap={2} vAlign="center">
+            <Heading level={3}>{config.name}</Heading>
+            <Badge variant="yellow" label={config.language} />
+          </HStack>
+          <Text type="supporting" as="p">
+            {config.description}
+          </Text>
+        </VStack>
+        {config.screenshot &&
+          (imgError ? (
+            <Text type="supporting" justify="center">
+              Screenshot unavailable
+            </Text>
+          ) : (
+            <div className="shot">
               <img
                 src={config.screenshot}
-                alt={config.name}
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  height: 'auto',
-                  objectFit: 'contain',
-                }}
+                alt={`${config.name} screenshot`}
+                loading="lazy"
+                decoding="async"
                 onError={() => setImgError(true)}
               />
+            </div>
+          ))}
+        {expanded && (
+          <div aria-live="polite">
+            {loading ? (
+              <Text type="supporting">Loading source…</Text>
+            ) : error ? (
+              <Banner
+                status="error"
+                title="Source failed to load"
+                description={error}
+                container="section"
+                endContent={
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    label="Retry loading source"
+                    onClick={() => setRetryNonce((n) => n + 1)}
+                  >
+                    Retry
+                  </Button>
+                }
+              />
+            ) : fetchedCode ? (
+              <CodeBlock
+                code={fetchedCode}
+                language={lang}
+                title={config.name}
+                hasLineNumbers
+                width="100%"
+                maxHeight={400}
+                container="section"
+              />
             ) : (
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 120 }}>
-                <Typography variant="caption" sx={{ color: 'var(--muted)' }}>
-                  Screenshot unavailable
-                </Typography>
-              </Box>
+              <Text type="supporting">Source is empty.</Text>
             )}
-          </Box>
+          </div>
         )}
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <Box
-            sx={{
-              position: 'relative',
-              borderRadius: 1,
-              overflow: 'auto',
-              maxHeight: { xs: 250, sm: 400 },
-              border: '1px solid var(--muted)',
-              '& pre': {
-                margin: 0,
-                padding: '1rem !important',
-                background: 'var(--bg) !important',
-              },
-              '& code': {
-                fontFamily: "'JetBrainsMono Nerd Font', 'JetBrains Mono', monospace !important",
-                fontSize: '0.8rem !important',
-                lineHeight: '0.9 !important',
-              },
-            }}
-          >
-            {fetchedCode && (
-              <IconButton
-                onClick={handleCopy}
-                size="small"
-                sx={{
-                  position: 'absolute',
-                  top: 8,
-                  right: 8,
-                  zIndex: 1,
-                  backgroundColor: 'var(--panel)',
-                  '&:hover': {
-                    backgroundColor: 'color-mix(in srgb, var(--purple) 12%, transparent)',
-                    color: 'var(--purple)',
-                  },
-                }}
-              >
-                <Icon name={copied ? 'check' : 'content_copy'} size={16} />
-              </IconButton>
-            )}
-            <Suspense fallback={null}>
-              {loading ? (
-                <Box sx={{ p: 2, color: 'var(--muted)', fontFamily: "'JetBrainsMono Nerd Font', monospace", fontSize: '0.8rem' }}>
-                  Loading source...
-                </Box>
-              ) : error ? (
-                <Box sx={{ p: 2, color: 'var(--red)', fontFamily: "'JetBrainsMono Nerd Font', monospace", fontSize: '0.8rem' }}>
-                  Failed to load source: {error}
-                </Box>
-              ) : fetchedCode ? (
-                <SyntaxHighlighter
-                  language={lang}
-                  style={draculaSyntaxTheme}
-                  customStyle={{
-                    margin: 0,
-                    borderRadius: 0,
-                  }}
-                  wrapLines
-                  wrapLongLines
-                >
-                  {fetchedCode}
-                </SyntaxHighlighter>
-              ) : null}
-            </Suspense>
-          </Box>
-        </Collapse>
-      </CardContent>
-      <CardActions sx={{ justifyContent: config.sourceUrl ? 'space-between' : 'flex-start' }}>
-        <Button
-          size="small"
-          onClick={() => setExpanded(!expanded)}
-          sx={{
-            color: 'var(--purple)',
-            '&:hover': { backgroundColor: 'color-mix(in srgb, var(--purple) 8%, transparent)' },
-          }}
-        >
-          {expanded ? 'Hide Source' : 'View Source'}
-          <Icon name="expand_more" size={20} />
-        </Button>
-        {config.sourceUrl && (
+        <HStack gap={2} wrap="wrap">
           <Button
-            size="small"
-            href={config.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            endIcon={<Icon name="open_in_new" size={18} />}
-            sx={{
-              color: 'var(--cyan)',
-              '&:hover': {
-                backgroundColor: 'color-mix(in srgb, var(--pink) 8%, transparent)',
-                color: 'var(--pink)',
-              },
-            }}
-          >
-            Full Config
-          </Button>
-        )}
-      </CardActions>
+            variant="ghost"
+            size="sm"
+            label={expanded ? 'Hide source' : 'View source'}
+            icon={expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            onClick={() => setExpanded(!expanded)}
+          />
+          {config.sourceUrl && (
+            <Link href={config.sourceUrl} isStandalone isExternalLink>
+              Full config
+            </Link>
+          )}
+        </HStack>
+      </VStack>
     </Card>
   );
 }
