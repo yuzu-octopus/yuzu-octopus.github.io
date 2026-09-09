@@ -58,6 +58,18 @@ export const configs: Config[] = [
     language: 'yaml',
   },
   {
+    id: 'code-runner',
+    name: 'Code Runner',
+    description:
+      'Polyglot file runner with Dracula-themed output — detects file extensions and runs with the appropriate interpreter (Python, JS/TS, Go, Rust, C/C++, Java, Shell, Nushell, Ruby, Perl, Lua, Swift)',
+    screenshot: '/screenshots/code-runner.gif',
+    screenshotWidth: 3840,
+    screenshotHeight: 2160,
+    sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/scripts/code_runner.zsh',
+    rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/scripts/code_runner.zsh',
+    language: 'sh',
+  },
+  {
     id: 'nushell-env',
     name: 'Nushell Environment',
     description:
@@ -74,17 +86,5 @@ export const configs: Config[] = [
     sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/nushell/config.nu',
     rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/nushell/config.nu',
     language: 'nu',
-  },
-  {
-    id: 'code-runner',
-    name: 'Code Runner',
-    description:
-      'Polyglot file runner with Dracula-themed output — detects file extensions and runs with the appropriate interpreter (Python, JS/TS, Go, Rust, C/C++, Java, Shell, Nushell, Ruby, Perl, Lua, Swift)',
-    screenshot: '/screenshots/code-runner.gif',
-    screenshotWidth: 3840,
-    screenshotHeight: 2160,
-    sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/scripts/code_runner.zsh',
-    rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/scripts/code_runner.zsh',
-    language: 'sh',
   },
 ];

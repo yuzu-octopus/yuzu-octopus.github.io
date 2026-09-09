@@ -1,10 +1,11 @@
-import { SideNav, SideNavHeading, SideNavItem, SideNavSection } from '@astryxdesign/core/SideNav';
+import { SideNav, SideNavCollapseButton, SideNavHeading, SideNavItem, SideNavSection } from '@astryxdesign/core/SideNav';
 import { Avatar } from '@astryxdesign/core/Avatar';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Text } from '@astryxdesign/core/Text';
 import { VStack } from '@astryxdesign/core/Stack';
 import { Braces, ExternalLink, FolderGit2, Home, SquareTerminal, User } from 'lucide-react';
 import type { AnchorHTMLAttributes } from 'react';
+import { useState } from 'react';
 import { SITE } from '../data/site';
 import { configs } from '../data/configs';
 import { projects } from '../data/projects';
@@ -33,9 +34,12 @@ const counts: Record<string, number> = {
 
 export function Sidebar() {
   const activeSection = useScrollSpy(sectionIds);
+  const [isCollapsed, setCollapsed] = useState(false);
 
   return (
     <SideNav
+      collapsible={{ isCollapsed, onCollapsedChange: setCollapsed, hasButton: false }}
+      footerIcons={<SideNavCollapseButton />}
       header={
         <SideNavHeading
           heading="yuzu"
@@ -45,9 +49,11 @@ export function Sidebar() {
         />
       }
       footer={
-        <VStack gap={1}>
-          <Text type="supporting">© 2026 {SITE.githubUsername}</Text>
-        </VStack>
+        isCollapsed ? null : (
+          <VStack gap={1}>
+            <Text type="supporting">© 2026 {SITE.githubUsername}</Text>
+          </VStack>
+        )
       }
     >
       <SideNavSection title="Portfolio">
