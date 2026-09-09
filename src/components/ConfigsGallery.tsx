@@ -5,23 +5,20 @@ import { Text } from '@astryxdesign/core/Text';
 import { configs } from '../data/configs';
 import { ConfigCard } from './ConfigCard';
 import { SectionHeading } from './SectionHeading';
-import { useScrollReveal } from '../hooks/useScrollReveal';
 
 export function ConfigsGallery() {
-  const sectionRef = useScrollReveal<HTMLElement>();
-
   return (
-    <Section id="configs" ref={sectionRef} className="reveal">
+    <Section id="configs">
       <VStack gap={4}>
         <SectionHeading>Configs</SectionHeading>
         {configs.length > 0 ? (
-          <Grid columns={{ minWidth: 300 }} gap={4}>
+          <Grid columns={{ minWidth: 300, max: 2 }} gap={4}>
             {configs.map((config) => (
               <ConfigCard key={config.id} config={config} />
             ))}
           </Grid>
         ) : (
-          <Text type="supporting" justify="center">
+          <Text type="body" justify="center">
             No configurations to display yet.
           </Text>
         )}

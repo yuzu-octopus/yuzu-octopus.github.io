@@ -8,19 +8,16 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { SectionHeading } from './SectionHeading';
 import { projects } from '../data/projects';
-import { useScrollReveal } from '../hooks/useScrollReveal';
 
 export function Projects() {
-  const sectionRef = useScrollReveal<HTMLElement>();
-
   return (
-    <Section id="projects" ref={sectionRef} className="reveal">
+    <Section id="projects">
       <VStack gap={4}>
         <SectionHeading lede="Things I built and maintain.">Projects</SectionHeading>
         {projects.length > 0 ? (
-          <Grid columns={{ minWidth: 320 }} gap={4}>
+          <Grid columns={{ minWidth: 320, max: 3 }} gap={4}>
             {projects.map((project) => (
-              <Card key={project.id} className="hover-lift">
+              <Card key={project.id}>
                 <VStack gap={3}>
                   <HStack justify="start">
                     <Badge variant="cyan" label={project.language} />
@@ -34,7 +31,7 @@ export function Projects() {
                       <Badge key={feature} variant="yellow" label={feature} />
                     ))}
                   </HStack>
-                  <Link href={project.githubUrl} isStandalone isExternalLink>
+                  <Link href={project.githubUrl} isStandalone isExternalLink hasUnderline>
                     Repository
                   </Link>
                 </VStack>
@@ -42,7 +39,7 @@ export function Projects() {
             ))}
           </Grid>
         ) : (
-          <Text type="supporting" justify="center">
+          <Text type="body" justify="center">
             No projects to display yet.
           </Text>
         )}

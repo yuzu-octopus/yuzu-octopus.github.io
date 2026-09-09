@@ -9,8 +9,6 @@ import { astryxDraculaTheme } from 'astryx-dracula';
 import App from './App.tsx'
 import './styles/global.css';
 
-document.documentElement.classList.add('js');
-
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error('Root element not found — check index.html for <div id="root">');

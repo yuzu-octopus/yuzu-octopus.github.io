@@ -6,7 +6,7 @@
       "name": "vite-scaffold",
       "dependencies": {
         "@astryxdesign/core": "^0.5.4",
-        "astryx-dracula": "^0.1.3",
+        "astryx-dracula": "^0.1.5",
         "lucide-react": "^1.43.0",
         "react": "^19.2.6",
         "react-dom": "^19.2.6",
@@ -303,7 +303,7 @@
 
     "ast-types": ["ast-types@0.16.3", "", { "dependencies": { "tslib": "^2.0.1" } }, "sha512-FvWoWYfSCM6kRxCSH+MGLHIKKGRL6A6AW7Zek2O32REPQRdg131428uRTKMBYAeRd3XXAaHDS60Wpri7CdKDrA=="],
 
-    "astryx-dracula": ["astryx-dracula@0.1.3", "", { "dependencies": { "@astryxdesign/core": "^0.3.0", "@stylexjs/stylex": "^0.19.0", "lucide-react": "^1.33.0", "react": "^19.2.8", "react-dom": "^19.2.8" } }, "sha512-IClHQJRt9VGoZtn9Y3NvM0UbAPy1l6zfAiVDAywehjc3gz/UNdmnDU7XGFvOz74lFWLW1d5GhfiljGedTL8ylQ=="],
+    "astryx-dracula": ["astryx-dracula@0.1.5", "", { "dependencies": { "@astryxdesign/core": "^0.3.0", "@stylexjs/stylex": "^0.19.0", "lucide-react": "^1.33.0", "react": "^19.2.8", "react-dom": "^19.2.8" } }, "sha512-SZdIq4KTOKEX74llbq7WyczPytIGK3xRC+fpAyRr4vOs22jvDPW3cUoov1Sc4SkqoTGuyxqD3sXEn7c9X6gG+g=="],
 
     "balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
 

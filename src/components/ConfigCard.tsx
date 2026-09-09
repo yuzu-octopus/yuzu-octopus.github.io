@@ -37,7 +37,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
 
   return (
     <GridSpan columns={expanded ? 'full' : undefined}>
-      <Card className="hover-lift">
+      <Card>
         <VStack gap={3}>
           <VStack gap={2}>
             <HStack gap={2} vAlign="center">
@@ -54,18 +54,17 @@ export function ConfigCard({ config }: ConfigCardProps) {
                 Screenshot unavailable
               </Text>
             ) : (
-              <div className="shot">
-                <img
-                  src={config.screenshot}
-                  alt={`${config.name} screenshot`}
-                  loading="lazy"
-                  decoding="async"
-                  onError={() => setImgError(true)}
-                />
-              </div>
+              <img
+                className="shot"
+                src={config.screenshot}
+                alt={`${config.name} screenshot`}
+                loading="lazy"
+                decoding="async"
+                onError={() => setImgError(true)}
+              />
             ))}
           {expanded && (
-            <div aria-live="polite">
+            <Text as="div" aria-live="polite">
               {loading ? (
                 <Text type="supporting">Loading source…</Text>
               ) : error ? (
@@ -96,9 +95,9 @@ export function ConfigCard({ config }: ConfigCardProps) {
                   container="section"
                 />
               ) : (
-                <Text type="supporting">Source is empty.</Text>
+                <Text type="body">Source is empty.</Text>
               )}
-            </div>
+            </Text>
           )}
           <HStack gap={2} wrap="wrap">
             <Button
@@ -109,7 +108,7 @@ export function ConfigCard({ config }: ConfigCardProps) {
               onClick={() => setExpanded(!expanded)}
             />
             {config.sourceUrl && (
-              <Link href={config.sourceUrl} isStandalone isExternalLink>
+              <Link href={config.sourceUrl} isStandalone isExternalLink hasUnderline>
                 Full config
               </Link>
             )}

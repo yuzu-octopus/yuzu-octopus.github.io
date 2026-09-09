@@ -22,7 +22,7 @@ interface ToolCardProps {
 
 export function ToolCard({ tool, showCategory = true }: ToolCardProps) {
   return (
-    <Card className="hover-lift">
+    <Card>
       <VStack gap={2}>
         <HStack gap={2} vAlign="center" justify="between">
           <HStack gap={2} vAlign="center" wrap="wrap">

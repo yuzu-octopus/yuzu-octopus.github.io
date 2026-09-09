@@ -7,7 +7,6 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { ExternalLink } from 'lucide-react';
 import { SITE } from '../data/site';
-import { useScrollReveal } from '../hooks/useScrollReveal';
 
 function scrollToSection(id: string) {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -30,10 +29,8 @@ function scrollToSection(id: string) {
 }
 
 export function Hero() {
-  const sectionRef = useScrollReveal<HTMLElement>();
-
   return (
-    <Section id="hero" ref={sectionRef} className="reveal" padding={10}>
+    <Section id="hero" padding={10}>
       <VStack gap={4} hAlign="center">
         <Avatar src={SITE.avatarUrl} name="yuzu" size={144} />
         <VStack gap={2} hAlign="center">

@@ -1,7 +1,8 @@
-/* App-level mechanics. Colors come from astryx-dracula tokens; nothing invented here. */
+/* App-level mechanics. Colors come from astryx-dracula tokens; nothing invented here.
+   No entrance choreography, no hover lifts — motion answers action only. */
 
 html {
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: var(--color-selection) transparent;
   scrollbar-width: thin;
 }
 
@@ -21,8 +22,12 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: var(--color-selection);
   border-radius: var(--border-radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-current-line);
 }
 
 /* Anchor offset for sections under the sticky mobile bar.
@@ -32,140 +37,27 @@ html {
   scroll-margin-top: calc(var(--space-gap) * 4);
 }
 
-/* Config screenshots: fixed 16/9 media so card bodies align across the grid
-   regardless of source screenshot dimensions. Border/radius stay on tokens. */
-.shot {
-  overflow: hidden;
+/* Config screenshots: bordered media inside cards. */
+img.shot {
+  display: block;
+  width: 100%;
+  height: auto;
   aspect-ratio: 16 / 9;
+  object-fit: cover;
+  overflow: hidden;
   border: 1px solid var(--color-widget-content-border);
   border-radius: var(--radius-element);
 }
 
-.shot img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Reveal is progressive enhancement: visible by default, hidden only when
-   JS is present to observe (main.tsx adds .js) and motion is allowed. */
-.js .reveal {
-  opacity: 0;
-  transform: translateY(24px);
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
+/* 24px hit target for icon-only links: 16px glyph + 2x4px padding,
+   negative margin keeps layout untouched. */
+.icon-hit {
+  padding: var(--spacing-1);
+  margin: calc(var(--spacing-1) * -1);
 }
 
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
   }
-
-  .js .reveal {
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-
-  .hover-lift {
-    transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
-      border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Staggered grid-child entrances: cards are Grid children at varying DOM
-     depths, so scope by the .hover-lift hook (every grid card carries it)
-     rather than by depth. Hidden until the ancestor section reveals, then
-     each sibling steps 70ms after the previous, capped at eight. */
-  .js .reveal .hover-lift {
-    opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 450ms ease,
-      transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
-      border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .js .reveal.visible .hover-lift {
-    opacity: 1;
-    transform: none;
-  }
-
-  .js .reveal.visible .hover-lift:nth-child(2),
-  .js .reveal.visible div:nth-child(2) > .hover-lift {
-    transition-delay: 70ms;
-  }
-
-  .js .reveal.visible .hover-lift:nth-child(3),
-  .js .reveal.visible div:nth-child(3) > .hover-lift {
-    transition-delay: 140ms;
-  }
-
-  .js .reveal.visible .hover-lift:nth-child(4),
-  .js .reveal.visible div:nth-child(4) > .hover-lift {
-    transition-delay: 210ms;
-  }
-
-  .js .reveal.visible .hover-lift:nth-child(5),
-  .js .reveal.visible div:nth-child(5) > .hover-lift {
-    transition-delay: 280ms;
-  }
-
-  .js .reveal.visible .hover-lift:nth-child(6),
-  .js .reveal.visible div:nth-child(6) > .hover-lift {
-    transition-delay: 350ms;
-  }
-
-  .js .reveal.visible .hover-lift:nth-child(7),
-  .js .reveal.visible div:nth-child(7) > .hover-lift {
-    transition-delay: 420ms;
-  }
-
-  .js .reveal.visible .hover-lift:nth-child(8),
-  .js .reveal.visible .hover-lift:nth-child(n + 9),
-  .js .reveal.visible div:nth-child(8) > .hover-lift,
-  .js .reveal.visible div:nth-child(n + 9) > .hover-lift {
-    transition-delay: 490ms;
-  }
-
-  /* Hover lift re-asserted: the entrance rules above out-specify the base
-     .hover-lift:hover, and the delay reset (ordered last: tied specificity
-     loses to the nth-child delays otherwise) keeps hover instant. */
-  .js .reveal.visible .hover-lift:hover,
-  .js .reveal.visible div:nth-child(n) > .hover-lift:hover {
-    transform: translateY(-2px);
-    transition-delay: 0s;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .js .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-
-  /* Stagger is motion: cards render in final state with no delay. */
-  .js .reveal .hover-lift {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-
-  .hover-lift:hover {
-    transform: none;
-  }
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-accent);
-}
-
-/* Icon-link hit target: expands the tap area without shifting layout
-   (padding grows the hit box, negative margin pulls layout back).
-   Token-only: --spacing-1 is the core spacing scale (4px). */
-.icon-hit {
-  padding: var(--spacing-1);
-  margin: calc(var(--spacing-1) * -1);
 }

@@ -14,12 +14,3 @@ if (!window.matchMedia) {
       dispatchEvent: () => false,
     }) as MediaQueryList;
 }
-
-// jsdom has no IntersectionObserver; scroll-reveal hooks only need the shape.
-if (!window.IntersectionObserver) {
-  window.IntersectionObserver = class IntersectionObserver {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-  } as unknown as typeof IntersectionObserver;
-}

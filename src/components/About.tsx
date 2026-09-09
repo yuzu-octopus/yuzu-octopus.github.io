@@ -2,13 +2,10 @@ import { Section } from '@astryxdesign/core/Section';
 import { Text } from '@astryxdesign/core/Text';
 import { VStack } from '@astryxdesign/core/Stack';
 import { SectionHeading } from './SectionHeading';
-import { useScrollReveal } from '../hooks/useScrollReveal';
 
 export function About() {
-  const sectionRef = useScrollReveal<HTMLElement>();
-
   return (
-    <Section id="about" ref={sectionRef} className="reveal" maxWidth="75ch">
+    <Section id="about" maxWidth="75ch">
       <VStack gap={4}>
         <SectionHeading>About Me</SectionHeading>
         <VStack gap={3}>
