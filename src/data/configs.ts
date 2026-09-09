@@ -5,6 +5,8 @@ export interface Config {
   name: string;
   description: string;
   screenshot?: string;
+  screenshotWidth?: number;
+  screenshotHeight?: number;
   sourceUrl: string;
   rawUrl: string;
   language: ConfigLanguage;
@@ -16,6 +18,8 @@ export const configs: Config[] = [
     name: 'Fastfetch',
     description: 'System info display with custom Dracula theming and categorized modules',
     screenshot: '/screenshots/fastfetch.png',
+    screenshotWidth: 3683,
+    screenshotHeight: 2016,
     sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/fastfetch/config.jsonc',
     rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/fastfetch/config.jsonc',
     language: 'json',
@@ -25,6 +29,8 @@ export const configs: Config[] = [
     name: 'Starship',
     description: 'Cross-shell prompt with Dracula palette and directory substitutions',
     screenshot: '/screenshots/starship.png',
+    screenshotWidth: 3683,
+    screenshotHeight: 2016,
     sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/starship.toml',
     rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/starship.toml',
     language: 'toml',
@@ -34,6 +40,8 @@ export const configs: Config[] = [
     name: 'Ghostty',
     description: 'GPU-accelerated terminal with Dracula theme, transparency, and Nerd Font',
     screenshot: '/screenshots/ghostty.gif',
+    screenshotWidth: 3683,
+    screenshotHeight: 2016,
     sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/ghostty/config',
     rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/ghostty/config',
     language: 'ini',
@@ -43,6 +51,8 @@ export const configs: Config[] = [
     name: 'omp',
     description: 'AI coding agent with IDE integration, plugin system, and MCP servers',
     screenshot: '/screenshots/omp.png',
+    screenshotWidth: 3683,
+    screenshotHeight: 2016,
     sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/omp/omp.yaml',
     rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/omp/omp.yaml',
     language: 'yaml',
@@ -71,6 +81,8 @@ export const configs: Config[] = [
     description:
       'Polyglot file runner with Dracula-themed output — detects file extensions and runs with the appropriate interpreter (Python, JS/TS, Go, Rust, C/C++, Java, Shell, Nushell, Ruby, Perl, Lua, Swift)',
     screenshot: '/screenshots/code-runner.gif',
+    screenshotWidth: 3840,
+    screenshotHeight: 2160,
     sourceUrl: 'https://github.com/yuzu-octopus/.config/blob/main/scripts/code_runner.zsh',
     rawUrl: 'https://raw.githubusercontent.com/yuzu-octopus/.config/main/scripts/code_runner.zsh',
     language: 'sh',
