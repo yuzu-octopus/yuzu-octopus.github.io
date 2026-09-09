@@ -7,9 +7,9 @@ import { Text } from '@astryxdesign/core/Text';
 import { ExternalLink } from 'lucide-react';
 import type { Tool, ToolCategory } from '../data/tools';
 
-const categoryBadge: Record<ToolCategory, 'cyan' | 'green' | 'purple' | 'yellow' | 'pink'> = {
+const categoryBadge: Record<ToolCategory, 'cyan' | 'green' | 'blue' | 'yellow' | 'pink'> = {
   Terminal: 'green',
-  Editor: 'purple',
+  Editor: 'blue',
   Languages: 'cyan',
   Runtime: 'yellow',
   Messaging: 'pink',
@@ -17,17 +17,16 @@ const categoryBadge: Record<ToolCategory, 'cyan' | 'green' | 'purple' | 'yellow'
 
 interface ToolCardProps {
   tool: Tool;
-  showCategory?: boolean;
 }
 
-export function ToolCard({ tool, showCategory = true }: ToolCardProps) {
+export function ToolCard({ tool }: ToolCardProps) {
   return (
     <Card>
       <VStack gap={2}>
         <HStack gap={2} vAlign="center" justify="between">
           <HStack gap={2} vAlign="center" wrap="wrap">
-            <Heading level={4}>{tool.name}</Heading>
-            {showCategory && <Badge variant={categoryBadge[tool.category]} label={tool.category} />}
+            <Heading level={3}>{tool.name}</Heading>
+            <Badge variant={categoryBadge[tool.category]} label={tool.category} />
           </HStack>
           {tool.url && (
             <Link href={tool.url} label={`Open ${tool.name} (opens in new tab)`} tooltip={tool.name} target="_blank" className="icon-hit">

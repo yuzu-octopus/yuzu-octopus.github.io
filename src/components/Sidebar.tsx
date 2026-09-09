@@ -1,11 +1,10 @@
 import { SideNav, SideNavCollapseButton, SideNavHeading, SideNavItem, SideNavSection } from '@astryxdesign/core/SideNav';
 import { Avatar } from '@astryxdesign/core/Avatar';
 import { Badge } from '@astryxdesign/core/Badge';
-import { Text } from '@astryxdesign/core/Text';
-import { VStack } from '@astryxdesign/core/Stack';
 import { Braces, ExternalLink, FolderGit2, Home, SquareTerminal, User } from 'lucide-react';
 import type { AnchorHTMLAttributes } from 'react';
 import { useState } from 'react';
+import { useMediaQuery } from '@astryxdesign/core/hooks';
 import { SITE } from '../data/site';
 import { configs } from '../data/configs';
 import { projects } from '../data/projects';
@@ -35,24 +34,26 @@ const counts: Record<string, number> = {
 export function Sidebar() {
   const activeSection = useScrollSpy(sectionIds);
   const [isCollapsed, setCollapsed] = useState(false);
+  // The collapse toggle only exists on the desktop rail; the mobile drawer
+  // always renders the full header, so collapsed chrome must never leak
+  // into it. Footer text is dropped entirely: the main Footer owns attribution.
+  const isDesktop = useMediaQuery('(min-width: 900px)');
+  const railCollapsed = isCollapsed && isDesktop;
 
   return (
     <SideNav
       collapsible={{ isCollapsed, onCollapsedChange: setCollapsed, hasButton: false }}
       footerIcons={<SideNavCollapseButton />}
       header={
-        <SideNavHeading
-          heading="yuzu"
-          subheading="solo dev · ctf · configs"
-          headingHref="#hero"
-          icon={<Avatar src={SITE.avatarUrl} name="yuzu" size="lg" />}
-        />
-      }
-      footer={
-        isCollapsed ? null : (
-          <VStack gap={1}>
-            <Text type="supporting">© 2026 {SITE.githubUsername}</Text>
-          </VStack>
+        railCollapsed ? (
+          <Avatar src={SITE.avatarUrl} name="yuzu" size="xsm" href="#hero" />
+        ) : (
+          <SideNavHeading
+            heading="yuzu"
+            subheading="solo dev · ctf · configs"
+            headingHref="#hero"
+            icon={<Avatar src={SITE.avatarUrl} name="yuzu" size="lg" />}
+          />
         )
       }
     >

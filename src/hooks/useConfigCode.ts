@@ -22,6 +22,7 @@ export function useConfigCode(
   const [error, setError] = useState<string | null>(null);
   const cacheRef = useRef<Map<string, string>>(new Map());
   const cancelledRef = useRef(false);
+  const consumedNonce = useRef(0);
 
   useEffect(() => {
     if (!rawUrl || !shouldFetch) {
@@ -29,7 +30,12 @@ export function useConfigCode(
     }
 
     // A retry explicitly discards the previous attempt, then caching resumes.
-    if (retryNonce > 0) cacheRef.current.delete(rawUrl);
+    // Consume the nonce so later effect re-runs (collapse/re-expand) reuse
+    // the fresh result instead of evicting and refetching it.
+    if (retryNonce > consumedNonce.current) {
+      consumedNonce.current = retryNonce;
+      cacheRef.current.delete(rawUrl);
+    }
     // Return cached result if available
     const cached = cacheRef.current.get(rawUrl);
     if (cached !== undefined) {

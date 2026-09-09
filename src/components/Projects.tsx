@@ -8,40 +8,19 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { SectionHeading } from './SectionHeading';
 import { projects } from '../data/projects';
-import { useEffect, useRef, useState } from 'react';
-
-// The last card spans the full row only when the grid resolves to a column
-// count that would otherwise strand it (3 cols: 3+1). At 2 cols (2+2) and
-// 1 col the span would punch a hole, so measure instead of breakpoint math.
-function useColumnCount() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [columns, setColumns] = useState(1);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof ResizeObserver === 'undefined') return;
-    const measure = () => {
-      const kids = Array.from(el.children) as HTMLElement[];
-      if (kids.length === 0) return;
-      const top = kids[0].offsetTop;
-      setColumns(kids.filter((k) => k.offsetTop === top).length || 1);
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-  return { ref, columns };
-}
+import { useColumnCount } from '../hooks/useColumnCount';
 
 export function Projects() {
   const { ref, columns } = useColumnCount();
-  const spanLast = columns !== 2;
+  // Span the last card only when the final row would otherwise hold exactly
+  // one card (4 items at 3 cols). Single column is already full width.
+  const spanLast = columns > 1 && projects.length % columns === 1;
   return (
     <Section id="projects">
       <VStack gap={4}>
         <SectionHeading lede="Things I built and maintain.">Projects</SectionHeading>
         {projects.length > 0 ? (
-          <Grid ref={ref} columns={{ minWidth: 320, max: 3 }} gap={4}>
+          <Grid ref={ref} columns={{ minWidth: 320, max: 3 }} gap={4} align="start">
             {projects.map((project, i) => (
               <GridSpan columns={i === projects.length - 1 && spanLast ? 'full' : undefined} key={project.id}>
               <Card>
@@ -54,7 +33,7 @@ export function Projects() {
                     {project.description}
                   </Text>
                   <HStack gap={2} wrap="wrap">
-                    {project.features.slice(0, 3).map((feature) => (
+                    {project.features.map((feature) => (
                       <Badge key={feature} variant="yellow" label={feature} />
                     ))}
                   </HStack>
@@ -67,9 +46,14 @@ export function Projects() {
             ))}
           </Grid>
         ) : (
-          <Text type="body" justify="center">
-            No projects to display yet.
-          </Text>
+          <VStack gap={2} hAlign="center">
+            <Heading level={3} justify="center">
+              No projects yet
+            </Heading>
+            <Text type="body" justify="center">
+              Published work will appear here once it is ready to show.
+            </Text>
+          </VStack>
         )}
       </VStack>
     </Section>

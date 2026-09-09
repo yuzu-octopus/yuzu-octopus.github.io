@@ -8,6 +8,7 @@ import { GridSpan } from '@astryxdesign/core/Grid';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Spinner } from '@astryxdesign/core/Spinner';
 import { Text } from '@astryxdesign/core/Text';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { Config, ConfigLanguage } from '../data/configs';
@@ -15,7 +16,6 @@ import { useConfigCode } from '../hooks/useConfigCode';
 
 interface ConfigCardProps {
   config: Config;
-  spanFull?: boolean;
 }
 
 const languageMap: Record<ConfigLanguage, string> = {
@@ -86,14 +86,14 @@ function ConfigPreview({ config }: { config: Config }) {
   );
 }
 
-export function ConfigCard({ config, spanFull }: ConfigCardProps) {
+export function ConfigCard({ config }: ConfigCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [retryNonce, setRetryNonce] = useState(0);
   const lang = languageMap[config.language] || 'plaintext';
   const { code: fetchedCode, loading, error } = useConfigCode(config.rawUrl, expanded, retryNonce);
 
   return (
-    <GridSpan columns={expanded || spanFull ? 'full' : undefined}>
+    <GridSpan columns={expanded ? 'full' : undefined}>
       <Card id={`config-${config.id}`}>
         <VStack gap={3}>
           <VStack gap={2}>
@@ -109,7 +109,7 @@ export function ConfigCard({ config, spanFull }: ConfigCardProps) {
           {expanded && (
             <Text as="div" aria-live="polite">
               {loading ? (
-                <Text type="supporting">Loading source…</Text>
+                <Spinner label="Loading source" />
               ) : error ? (
                 <Banner
                   status="error"
@@ -138,7 +138,12 @@ export function ConfigCard({ config, spanFull }: ConfigCardProps) {
                   container="section"
                 />
               ) : (
-                <Text type="body">Source is empty.</Text>
+                <Text type="body">
+                  Source is empty.{' '}
+                  <Link href={config.sourceUrl} type="inherit" hasUnderline>
+                    View full config
+                  </Link>
+                </Text>
               )}
             </Text>
           )}

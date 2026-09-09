@@ -4,9 +4,6 @@ export function useScrollSpy(ids: string[], offset = 120) {
   const [active, setActive] = useState(ids[0]);
 
   useEffect(() => {
-    let observer: MutationObserver | null = null;
-    let scrollHandler: (() => void) | null = null;
-
     function onScroll() {
       // Past the end: the last section owns the remainder even if it never
       // crosses the offset (short closing sections).
@@ -15,6 +12,7 @@ export function useScrollSpy(ids: string[], offset = 120) {
         return;
       }
       // Viewport-relative: immune to positioned ancestors (AppShell wrappers).
+      // Late-mounting lazy sections resolve live on every scroll event.
       let current = ids[0];
       for (const id of ids) {
         const el = document.getElementById(id);
@@ -25,37 +23,12 @@ export function useScrollSpy(ids: string[], offset = 120) {
       setActive(current);
     }
 
-    function setupScrollSpy() {
-      const sections = ids
-        .map((id) => document.getElementById(id))
-        .filter(Boolean) as HTMLElement[];
-
-      if (sections.length === 0) return false;
-
-      scrollHandler = onScroll;
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll);
-      onScroll();
-      return true;
-    }
-
-    // Try to setup immediately
-    if (!setupScrollSpy()) {
-      // If sections not found, watch for DOM changes
-      observer = new MutationObserver(() => {
-        if (setupScrollSpy() && observer) {
-          observer.disconnect();
-        }
-      });
-      observer.observe(document.body, { childList: true, subtree: true });
-    }
-
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
     return () => {
-      if (observer) observer.disconnect();
-      if (scrollHandler) {
-        window.removeEventListener('scroll', scrollHandler);
-        window.removeEventListener('resize', scrollHandler);
-      }
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
     };
   }, [ids, offset]);
 
