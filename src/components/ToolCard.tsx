@@ -7,12 +7,13 @@ import { Text } from '@astryxdesign/core/Text';
 import { ExternalLink } from 'lucide-react';
 import type { Tool, ToolCategory } from '../data/tools';
 
-const categoryBadge: Record<ToolCategory, 'cyan' | 'green' | 'blue' | 'yellow' | 'pink'> = {
+// Category badges, never status: blue/purple reserved, info is cyan.
+const categoryBadge: Record<ToolCategory, 'cyan' | 'green' | 'pink' | 'yellow' | 'orange'> = {
   Terminal: 'green',
-  Editor: 'blue',
+  Editor: 'pink',
   Languages: 'cyan',
   Runtime: 'yellow',
-  Messaging: 'pink',
+  Messaging: 'orange',
 };
 
 interface ToolCardProps {

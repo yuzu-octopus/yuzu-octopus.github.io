@@ -1,10 +1,8 @@
 /* App-level mechanics. Colors come from astryx-dracula tokens; nothing invented here.
    No entrance choreography, no hover lifts — motion answers action only. */
 
-html {
-  scrollbar-color: var(--color-selection) transparent;
-  scrollbar-width: thin;
-}
+/* Scrollbar paint rides on the kit: tokens.css owns thumb/track/hover.
+   Local rules below are app mechanics only. */
 
 ::selection {
   background: var(--color-selection);
@@ -14,20 +12,6 @@ html {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-selection);
-  border-radius: var(--border-radius);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-current-line);
 }
 
 /* Anchor offset for sections under the sticky mobile bar.

@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@astryxdesign/core": "^0.5.4",
-    "astryx-dracula": "^0.1.5",
+    "astryx-dracula": "^0.2.1",
     "lucide-react": "^1.43.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
