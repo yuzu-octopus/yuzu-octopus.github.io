@@ -9,8 +9,6 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { ExternalLink } from 'lucide-react';
 import { SITE } from '../data/site';
-import { ConfigCard } from './ConfigCard';
-import { configs } from '../data/configs';
 import { SiteStats } from './SiteStats';
 
 function scrollToSection(id: string) {
@@ -32,8 +30,6 @@ function scrollToSection(id: string) {
     }
   }, 200);
 }
-
-const featured = configs.slice(0, 4);
 
 export function Hero() {
   return (
@@ -79,11 +75,23 @@ export function Hero() {
               />
             </HStack>
           </VStack>
-          <Grid columns={{ minWidth: 240, max: 2 }} gap={3}>
-            {featured.map((config) => (
-              <ConfigCard key={config.id} config={config} />
-            ))}
-          </Grid>
+          <VStack gap={3} id="about">
+            <Heading level={2} type="display-3" color="accent">
+              About Me
+            </Heading>
+            <Text type="body" as="p">
+              I&apos;m a solo developer passionate about security, CTFs, and crafting the
+              perfect development environment. I believe that the tools you use shape how
+              you think, which is why I spend time configuring everything from my terminal
+              to my editor.
+            </Text>
+            <Text type="body" as="p">
+              When I&apos;m not solving CTF challenges or writing exploit scripts, you&apos;ll
+              find me tweaking dotfiles, exploring new tools, or building projects with
+              Python and JavaScript. I use Ghostty as my terminal, OpenCode as my AI coding
+              assistant, and Zed for quick edits.
+            </Text>
+          </VStack>
         </Grid>
         <Divider />
         <SiteStats />

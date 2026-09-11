@@ -4,7 +4,6 @@ import { Spinner } from '@astryxdesign/core/Spinner';
 import { Sidebar } from './components/Sidebar';
 import { Hero } from './components/Hero';
 
-const About = lazy(() => import('./components/About').then((m) => ({ default: m.About })));
 const Projects = lazy(() => import('./components/Projects').then((m) => ({ default: m.Projects })));
 const ConfigsGallery = lazy(() =>
   import('./components/ConfigsGallery').then((m) => ({ default: m.ConfigsGallery })),
@@ -38,7 +37,6 @@ function App() {
     <AppShell sideNav={<Sidebar />} height="auto" contentPadding={0}>
       <Hero />
       <Suspense fallback={<Spinner label="Loading sections" />}>
-        <About />
         <Projects />
         <ConfigsGallery />
         <Workspace />
